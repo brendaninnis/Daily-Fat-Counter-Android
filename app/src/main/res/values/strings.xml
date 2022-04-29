@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Daily Fat Counter</string>
+    <string name="nav_counter">Counter</string>
+    <string name="nav_history">History</string>
+    <string name="nav_settings">Settings</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>

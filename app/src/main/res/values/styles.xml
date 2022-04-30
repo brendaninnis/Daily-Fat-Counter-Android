@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Widget.DailyFatCounter.BottomNavigationView"
+           parent="Widget.MaterialComponents.BottomNavigationView">
+        <item name="elevation">0dp</item>
+    </style>
+
+    <style name="Widget.DailyFatCounter.CounterButton"
+           parent="Widget.MaterialComponents.Button">
+        // TODO: Create a branch an style up the Counter Button
+    </style>
+</resources>

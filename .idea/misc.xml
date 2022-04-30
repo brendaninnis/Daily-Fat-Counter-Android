@@ -3,8 +3,9 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="app/src/main/res/layout/activity_main.xml" value="0.25" />
-        <entry key="app/src/main/res/layout/fragment_counter.xml" value="0.13728470111448834" />
+        <entry key="app/src/main/res/drawable/background_counter_circle.xml" value="0.1565" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/fragment_counter.xml" value="0.20313095355589456" />
         <entry key="app/src/main/res/layout/fragment_history.xml" value="0.13728470111448834" />
         <entry key="app/src/main/res/layout/fragment_settings.xml" value="0.13728470111448834" />
         <entry key="app/src/main/res/menu/bottom_nav_menu.xml" value="0.2712962962962963" />

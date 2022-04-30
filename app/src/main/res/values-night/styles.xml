@@ -3,7 +3,5 @@
     <style name="Widget.DailyFatCounter.BottomNavigationView"
         parent="Widget.MaterialComponents.BottomNavigationView">
         <item name="elevation">0dp</item>
-        <item name="android:elevation">0dp</item>
-        <item name="elevationOverlayEnabled">false</item>
     </style>
 </resources>

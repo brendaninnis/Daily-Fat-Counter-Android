@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Widget.DailyFatCounter.BottomNavigationView"
+        parent="Widget.MaterialComponents.BottomNavigationView">
+        <item name="elevation">0dp</item>
+        <item name="android:elevation">0dp</item>
+        <item name="elevationOverlayEnabled">false</item>
+    </style>
+</resources>

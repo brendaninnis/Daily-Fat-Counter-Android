@@ -8,12 +8,11 @@ import androidx.core.content.ContextCompat
 import ca.brendaninnis.dailyfatcounter.R
 
 class CircularCounter(context: Context, attrs: AttributeSet) : View(context, attrs) {
+    private var progress = 0.67f
     private var rectF = RectF(0f, 0f, 0f, 0f)
     private val thiccness = context.resources.getDimension(R.dimen.counterThiccness)
     private val halfThiccness = thiccness * 0.5f
     private val thirdThiccness = thiccness * 0.33f
-    private val sixthThiccness = thirdThiccness * 0.5f
-    private val innerInset = sixthThiccness + halfThiccness
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.STROKE
         strokeCap = Paint.Cap.ROUND
@@ -35,6 +34,7 @@ class CircularCounter(context: Context, attrs: AttributeSet) : View(context, att
     override fun onDraw(canvas: Canvas) {
         // call the super method to keep any drawing from the parent side.
         super.onDraw(canvas)
+
         drawProgressCircle(canvas)
         drawInnerCircle(canvas)
     }
@@ -46,6 +46,11 @@ class CircularCounter(context: Context, attrs: AttributeSet) : View(context, att
 
     private fun drawProgressCircle(canvas: Canvas) {
         paint.strokeWidth = thiccness
-        canvas.drawArc(rectF, 0f, 105f, false, paint)
+        canvas.drawArc(rectF, CIRCLE_START_ANGLE, progress * CIRCLE_FULL_ROTATION, false, paint)
+    }
+
+    companion object {
+        const val CIRCLE_START_ANGLE    = -90f
+        const val CIRCLE_FULL_ROTATION  = 360f
     }
 }

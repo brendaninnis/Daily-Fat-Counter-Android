@@ -3,9 +3,7 @@
     android:shape="ring"
     android:useLevel="false"
     android:thickness="4dp">
-    <size
-        android:height="160dp"
-        android:width="160dp" />
+
     <gradient
         android:endColor="@color/green"
         android:centerColor="@color/yellow"

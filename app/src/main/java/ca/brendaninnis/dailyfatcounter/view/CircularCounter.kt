@@ -17,18 +17,21 @@ class CircularCounter(context: Context, attrs: AttributeSet) : View(context, att
         style = Paint.Style.STROKE
         strokeCap = Paint.Cap.ROUND
     }
-    private val colors = intArrayOf(ContextCompat.getColor(context, R.color.green),
+    private val colors = intArrayOf(
+        ContextCompat.getColor(context, R.color.green),
         ContextCompat.getColor(context, R.color.yellow),
         ContextCompat.getColor(context, R.color.yellow),
-        ContextCompat.getColor(context, R.color.green))
+        ContextCompat.getColor(context, R.color.green)
+    )
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
         rectF = RectF(0f, 0f, w.toFloat(), h.toFloat()).apply {
             inset(halfThiccness, halfThiccness)
         }
-        val gradient = SweepGradient(w * 0.5f, h * 0.5f, colors, null)
-        paint.shader = gradient
+        SweepGradient(w * 0.5f, h * 0.5f, colors, null).let {
+            paint.shader = it
+        }
     }
 
     override fun onDraw(canvas: Canvas) {

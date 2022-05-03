@@ -25,7 +25,9 @@ class CircularCounter(context: Context, attrs: AttributeSet) : View(context, att
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
-        rectF = RectF(0f, 0f, w.toFloat(), h.toFloat())
+        rectF = RectF(0f, 0f, w.toFloat(), h.toFloat()).apply {
+            inset(halfThiccness, halfThiccness)
+        }
         val gradient = SweepGradient(w * 0.5f, h * 0.5f, colors, null)
         paint.shader = gradient
     }
@@ -43,7 +45,6 @@ class CircularCounter(context: Context, attrs: AttributeSet) : View(context, att
     }
 
     private fun drawProgressCircle(canvas: Canvas) {
-        rectF.inset(halfThiccness, halfThiccness)
         paint.strokeWidth = thiccness
         canvas.drawArc(rectF, 0f, 105f, false, paint)
     }

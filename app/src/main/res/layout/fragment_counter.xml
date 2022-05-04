@@ -19,6 +19,7 @@
         android:layout_weight="1" />
 
     <ca.brendaninnis.dailyfatcounter.view.CircularCounter
+        android:id="@+id/counterfragment_counter_view"
         android:layout_width="160dp"
         android:layout_height="160dp"
         android:layout_gravity="center" />
@@ -39,18 +40,21 @@
             android:layout_weight="1" />
 
         <Button
+            android:id="@+id/counterfragment_one_button"
             android:layout_width="wrap_content"
             android:layout_height="60dp"
             android:layout_margin="8dp"
             android:text="+ 1g" />
 
         <Button
+            android:id="@+id/counterfragment_five_button"
             android:layout_width="wrap_content"
             android:layout_height="60dp"
             android:layout_margin="8dp"
             android:text="+ 5g" />
 
         <Button
+            android:id="@+id/counterfragment_ten_button"
             android:layout_width="wrap_content"
             android:layout_height="60dp"
             android:layout_margin="8dp"

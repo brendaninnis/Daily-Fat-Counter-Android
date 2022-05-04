@@ -1,14 +1,15 @@
 package ca.brendaninnis.dailyfatcounter.view
 
+import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
 import android.view.View
+import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.core.content.ContextCompat
 import ca.brendaninnis.dailyfatcounter.R
 
-class CircularCounter(context: Context, attrs: AttributeSet) : View(context, attrs) {
-    private var progress = 0.67f
+class CircularCounter(context: Context, attrs: AttributeSet) : View(context, attrs), ValueAnimator.AnimatorUpdateListener {
     private var rectF = RectF(0f, 0f, 0f, 0f)
     private val thiccness = context.resources.getDimension(R.dimen.counterThiccness)
     private val halfThiccness = thiccness * 0.5f
@@ -23,6 +24,20 @@ class CircularCounter(context: Context, attrs: AttributeSet) : View(context, att
         ContextCompat.getColor(context, R.color.yellow),
         ContextCompat.getColor(context, R.color.green)
     )
+    private var animator: ValueAnimator? = null
+
+    private var _progress = 0f
+    var progress: Float
+        get() = _progress
+        set(value) {
+            animator?.cancel()
+            animator = ValueAnimator.ofFloat(progress, value).apply {
+                duration = 350
+                interpolator = AccelerateDecelerateInterpolator()
+                addUpdateListener(this@CircularCounter)
+                start()
+            }
+        }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
@@ -49,11 +64,16 @@ class CircularCounter(context: Context, attrs: AttributeSet) : View(context, att
 
     private fun drawProgressCircle(canvas: Canvas) {
         paint.strokeWidth = thiccness
-        canvas.drawArc(rectF, CIRCLE_START_ANGLE, progress * CIRCLE_FULL_ROTATION, false, paint)
+        canvas.drawArc(rectF, CIRCLE_START_ANGLE, _progress * CIRCLE_FULL_ROTATION, false, paint)
     }
 
     companion object {
         const val CIRCLE_START_ANGLE    = -90f
         const val CIRCLE_FULL_ROTATION  = 360f
+    }
+
+    override fun onAnimationUpdate(animator: ValueAnimator) {
+        _progress = animator.animatedValue as Float
+        invalidate()
     }
 }

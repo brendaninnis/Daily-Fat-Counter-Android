@@ -1,16 +1,23 @@
 package ca.brendaninnis.dailyfatcounter.view
 
 import android.animation.ValueAnimator
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
+import android.util.Log
+import android.view.MotionEvent
+import android.view.MotionEvent.*
 import android.view.View
-import android.view.animation.AccelerateDecelerateInterpolator
+import android.view.animation.*
 import androidx.core.content.ContextCompat
+import ca.brendaninnis.dailyfatcounter.Geometry
 import ca.brendaninnis.dailyfatcounter.R
+import kotlin.math.atan
 
 class CircularCounter(context: Context, attrs: AttributeSet) : View(context, attrs), ValueAnimator.AnimatorUpdateListener {
     private var rectF = RectF(0f, 0f, 0f, 0f)
+    private var circleOrigin = PointF(0f, 0f)
     private val thiccness = context.resources.getDimension(R.dimen.counterThiccness)
     private val halfThiccness = thiccness * 0.5f
     private val thirdThiccness = thiccness * 0.33f
@@ -25,6 +32,10 @@ class CircularCounter(context: Context, attrs: AttributeSet) : View(context, att
         ContextCompat.getColor(context, R.color.green)
     )
     private var animator: ValueAnimator? = null
+    private var lastTouch = PointF(0f, 0f)
+    private var newTouch = PointF(0f, 0f)
+    private var lastAngle = 0f
+    private var lastQuadrant: Geometry.Quadrant = Geometry.Quadrant.ONE
 
     private var _progress = 0f
     var progress: Float
@@ -44,9 +55,86 @@ class CircularCounter(context: Context, attrs: AttributeSet) : View(context, att
         rectF = RectF(0f, 0f, w.toFloat(), h.toFloat()).apply {
             inset(halfThiccness, halfThiccness)
         }
+        circleOrigin = PointF(rectF.centerX(), rectF.centerY())
         SweepGradient(w * 0.5f, h * 0.5f, colors, null).let {
             paint.shader = it
         }
+    }
+
+    @SuppressLint("ClickableViewAccessibility") // TODO: Add accessibility features to this app
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        super.onTouchEvent(event)
+
+        val opposite: Float
+        val adjacent: Float
+        val quadrantOffset: Float
+
+        when (event?.action) {
+            ACTION_DOWN, ACTION_MOVE -> {
+                newTouch.x = event.rawX - x
+                newTouch.y = event.rawY - y
+
+                val newQuadrant = Geometry.quadrant(newTouch, circleOrigin)
+                when (newQuadrant) {
+                    Geometry.Quadrant.ONE -> {
+                        quadrantOffset = 0f
+                        opposite = newTouch.x - circleOrigin.x
+                        adjacent = circleOrigin.y - newTouch.y
+                    }
+                    Geometry.Quadrant.TWO -> {
+                        quadrantOffset = Math.PI.toFloat() * 0.5f
+                        opposite = newTouch.y - circleOrigin.y
+                        adjacent = newTouch.x - circleOrigin.x
+                    }
+                    Geometry.Quadrant.THREE -> {
+                        quadrantOffset = Math.PI.toFloat()
+                        opposite = circleOrigin.x - newTouch.x
+                        adjacent = newTouch.y - circleOrigin.y
+                    }
+                    Geometry.Quadrant.FOUR -> {
+                        quadrantOffset = Math.PI.toFloat() * 1.5f
+                        opposite = circleOrigin.y - newTouch.y
+                        adjacent = circleOrigin.x - newTouch.x
+                    }
+                }
+                val newAngle = atan(opposite / adjacent) + quadrantOffset
+
+                if (event.action == ACTION_DOWN) {
+                    lastAngle = newAngle
+                    lastQuadrant = newQuadrant
+                    return true
+                }
+
+                var rotationOffset = 0f
+                if (newQuadrant == Geometry.Quadrant.ONE && lastQuadrant == Geometry.Quadrant.FOUR) {
+                    rotationOffset = Geometry.RADIANS_PER_ROTATION
+                } else if (newQuadrant == Geometry.Quadrant.FOUR && lastQuadrant == Geometry.Quadrant.ONE) {
+                    rotationOffset = -1.0f * Geometry.RADIANS_PER_ROTATION
+                }
+                val newProgress = (newAngle ) / Geometry.RADIANS_PER_ROTATION
+                _progress = newProgress
+                invalidate()
+
+                Log.d("CircularCounter", "newAngle=${newAngle * (180f / Math.PI.toFloat())} newProgress=$newProgress")
+//                animator?.cancel()
+//                animator = ValueAnimator.ofFloat(progress, newProgress).apply {
+//                    duration = 100
+//                    interpolator = DecelerateInterpolator()
+//                    addUpdateListener(this@CircularCounter)
+//                    start()
+//                }
+
+                lastAngle = newAngle
+                lastQuadrant = newQuadrant
+
+                return true
+            }
+            ACTION_UP -> {
+                performClick()
+                return true
+            }
+        }
+        return false
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -67,13 +155,14 @@ class CircularCounter(context: Context, attrs: AttributeSet) : View(context, att
         canvas.drawArc(rectF, CIRCLE_START_ANGLE, _progress * CIRCLE_FULL_ROTATION, false, paint)
     }
 
-    companion object {
-        const val CIRCLE_START_ANGLE    = -90f
-        const val CIRCLE_FULL_ROTATION  = 360f
-    }
-
+    // MARK: ValueAnimator.AnimatorUpdateListener methods
     override fun onAnimationUpdate(animator: ValueAnimator) {
         _progress = animator.animatedValue as Float
         invalidate()
+    }
+
+    companion object {
+        const val CIRCLE_START_ANGLE    = -90f
+        const val CIRCLE_FULL_ROTATION  = 360f
     }
 }

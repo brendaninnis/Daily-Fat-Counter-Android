@@ -53,7 +53,7 @@ class CircularCounter(context: Context, attrs: AttributeSet) : View(context, att
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
         rectF = RectF(0f, 0f, w.toFloat(), h.toFloat()).apply {
-            inset(halfThiccness, halfThiccness)
+            inset(halfThiccness + paddingStart, halfThiccness + paddingTop)
         }
         circleOrigin = PointF(rectF.centerX(), rectF.centerY())
         SweepGradient(w * 0.5f, h * 0.5f, colors, null).let {

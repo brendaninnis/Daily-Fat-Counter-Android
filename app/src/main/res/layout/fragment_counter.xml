@@ -20,8 +20,9 @@
 
     <ca.brendaninnis.dailyfatcounter.view.CircularCounter
         android:id="@+id/counterfragment_counter_view"
-        android:layout_width="160dp"
-        android:layout_height="160dp"
+        android:layout_width="210dp"
+        android:layout_height="210dp"
+        android:padding="@dimen/circleCounterPadding"
         android:layout_gravity="center" />
 
     <Space

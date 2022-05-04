@@ -111,18 +111,13 @@ class CircularCounter(context: Context, attrs: AttributeSet) : View(context, att
                 } else if (newQuadrant == Geometry.Quadrant.FOUR && lastQuadrant == Geometry.Quadrant.ONE) {
                     rotationOffset = -1.0f * Geometry.RADIANS_PER_ROTATION
                 }
-                val newProgress = (newAngle ) / Geometry.RADIANS_PER_ROTATION
-                _progress = newProgress
+                val angleChange = newAngle - lastAngle + rotationOffset
+                val progressChange = angleChange / Geometry.RADIANS_PER_ROTATION
+                _progress += progressChange
+                if (_progress < 0f) {
+                    _progress = 0f
+                }
                 invalidate()
-
-                Log.d("CircularCounter", "newAngle=${newAngle * (180f / Math.PI.toFloat())} newProgress=$newProgress")
-//                animator?.cancel()
-//                animator = ValueAnimator.ofFloat(progress, newProgress).apply {
-//                    duration = 100
-//                    interpolator = DecelerateInterpolator()
-//                    addUpdateListener(this@CircularCounter)
-//                    start()
-//                }
 
                 lastAngle = newAngle
                 lastQuadrant = newQuadrant

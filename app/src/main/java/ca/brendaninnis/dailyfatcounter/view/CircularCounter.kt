@@ -5,7 +5,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
-import android.util.Log
 import android.view.MotionEvent
 import android.view.MotionEvent.*
 import android.view.View
@@ -32,12 +31,11 @@ class CircularCounter(context: Context, attrs: AttributeSet) : View(context, att
         ContextCompat.getColor(context, R.color.green)
     )
     private var animator: ValueAnimator? = null
-    private var lastTouch = PointF(0f, 0f)
-    private var newTouch = PointF(0f, 0f)
+    private var touchLocation = PointF(0f, 0f)
     private var lastAngle = 0f
     private var lastQuadrant: Geometry.Quadrant = Geometry.Quadrant.ONE
 
-    private var _progress = 0f
+    private var _progress = 0.8f
     var progress: Float
         get() = _progress
         set(value) {
@@ -71,30 +69,30 @@ class CircularCounter(context: Context, attrs: AttributeSet) : View(context, att
 
         when (event?.action) {
             ACTION_DOWN, ACTION_MOVE -> {
-                newTouch.x = event.rawX - x
-                newTouch.y = event.rawY - y
+                touchLocation.x = event.rawX - x
+                touchLocation.y = event.rawY - y
 
-                val newQuadrant = Geometry.quadrant(newTouch, circleOrigin)
+                val newQuadrant = Geometry.quadrant(touchLocation, circleOrigin)
                 when (newQuadrant) {
                     Geometry.Quadrant.ONE -> {
                         quadrantOffset = 0f
-                        opposite = newTouch.x - circleOrigin.x
-                        adjacent = circleOrigin.y - newTouch.y
+                        opposite = touchLocation.x - circleOrigin.x
+                        adjacent = circleOrigin.y - touchLocation.y
                     }
                     Geometry.Quadrant.TWO -> {
                         quadrantOffset = Math.PI.toFloat() * 0.5f
-                        opposite = newTouch.y - circleOrigin.y
-                        adjacent = newTouch.x - circleOrigin.x
+                        opposite = touchLocation.y - circleOrigin.y
+                        adjacent = touchLocation.x - circleOrigin.x
                     }
                     Geometry.Quadrant.THREE -> {
                         quadrantOffset = Math.PI.toFloat()
-                        opposite = circleOrigin.x - newTouch.x
-                        adjacent = newTouch.y - circleOrigin.y
+                        opposite = circleOrigin.x - touchLocation.x
+                        adjacent = touchLocation.y - circleOrigin.y
                     }
                     Geometry.Quadrant.FOUR -> {
                         quadrantOffset = Math.PI.toFloat() * 1.5f
-                        opposite = circleOrigin.y - newTouch.y
-                        adjacent = circleOrigin.x - newTouch.x
+                        opposite = circleOrigin.y - touchLocation.y
+                        adjacent = circleOrigin.x - touchLocation.x
                     }
                 }
                 val newAngle = atan(opposite / adjacent) + quadrantOffset

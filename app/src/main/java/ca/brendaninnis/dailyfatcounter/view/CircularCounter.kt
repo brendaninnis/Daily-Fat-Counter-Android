@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
+import android.util.Log
 import android.view.MotionEvent
 import android.view.MotionEvent.*
 import android.view.View
@@ -69,8 +70,8 @@ class CircularCounter(context: Context, attrs: AttributeSet) : View(context, att
 
         when (event?.action) {
             ACTION_DOWN, ACTION_MOVE -> {
-                touchLocation.x = event.rawX - x
-                touchLocation.y = event.rawY - y
+                touchLocation.x = event.x
+                touchLocation.y = event.y
 
                 val newQuadrant = Geometry.quadrant(touchLocation, circleOrigin)
                 when (newQuadrant) {
@@ -109,6 +110,7 @@ class CircularCounter(context: Context, attrs: AttributeSet) : View(context, att
                 } else if (newQuadrant == Geometry.Quadrant.FOUR && lastQuadrant == Geometry.Quadrant.ONE) {
                     rotationOffset = -1.0f * Geometry.RADIANS_PER_ROTATION
                 }
+                Log.d("CircularCounter", "touchLocation=$touchLocation")
                 val angleChange = newAngle - lastAngle + rotationOffset
                 val progressChange = angleChange / Geometry.RADIANS_PER_ROTATION
                 _progress += progressChange

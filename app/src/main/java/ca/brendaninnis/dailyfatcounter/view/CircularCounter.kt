@@ -110,7 +110,6 @@ class CircularCounter(context: Context, attrs: AttributeSet) : View(context, att
                 } else if (newQuadrant == Geometry.Quadrant.FOUR && lastQuadrant == Geometry.Quadrant.ONE) {
                     rotationOffset = -1.0f * Geometry.RADIANS_PER_ROTATION
                 }
-                Log.d("CircularCounter", "touchLocation=$touchLocation")
                 val angleChange = newAngle - lastAngle + rotationOffset
                 val progressChange = angleChange / Geometry.RADIANS_PER_ROTATION
                 _progress += progressChange

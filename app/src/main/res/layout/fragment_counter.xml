@@ -1,112 +1,122 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="12dp"
-    android:clipChildren="false"
-    android:clipToPadding="false"
     tools:context=".fragment.CounterFragment">
 
-    <TextView
-        android:textAppearance="?textAppearanceHeadline5"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Saturday, April 30" />
-
-    <Space
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
-
-    <FrameLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center" >
-
-        <ca.brendaninnis.dailyfatcounter.view.CircularCounter
-            android:id="@+id/counterfragment_counter_view"
-            android:layout_width="210dp"
-            android:layout_height="210dp"
-            android:layout_marginBottom="8dp"
-            android:padding="@dimen/circleCounterPadding"/>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_gravity="center">
-
-            <TextView
-                android:textAppearance="@style/TextAppearance.DailyFatCounter.Headline4"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="28.0g" />
-
-            <TextView
-                android:textAppearance="?textAppearanceSubtitle2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="/ 45.0g" />
-
-        </LinearLayout>
-
-        <TextView
-            android:textAppearance="?textAppearanceSubtitle1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|center_horizontal"
-            android:text="Total Fat" />
-    </FrameLayout>
-
-    <Space
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
+    <data>
+        <variable name="viewModel"
+            type="ca.brendaninnis.dailyfatcounter.viewmodel.CounterViewModel" />
+    </data>
 
     <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="0dp"
+        android:layout_height="match_parent"
+        android:padding="12dp"
         android:clipChildren="false"
-        android:clipToPadding="false"
-        android:orientation="horizontal">
+        android:clipToPadding="false">
+
+        <TextView
+            android:textAppearance="?textAppearanceHeadline5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Saturday, April 30" />
 
         <Space
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1" />
 
-        <Button
-            style="@style/Widget.DailyFatCounter.CounterButton"
-            android:id="@+id/counterfragment_one_button"
-            android:layout_width="90dp"
-            android:layout_height="60dp"
-            android:layout_margin="8dp"
-            android:text="+ 1g" />
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" >
 
-        <Button
-            style="@style/Widget.DailyFatCounter.CounterButton"
-            android:id="@+id/counterfragment_five_button"
-            android:layout_width="90dp"
-            android:layout_height="60dp"
-            android:layout_margin="8dp"
-            android:text="+ 5g" />
+            <ca.brendaninnis.dailyfatcounter.view.CircularCounter
+                android:id="@+id/counterfragment_counter_view"
+                android:layout_width="210dp"
+                android:layout_height="210dp"
+                android:layout_marginBottom="8dp"
+                android:padding="@dimen/circleCounterPadding"/>
 
-        <Button
-            style="@style/Widget.DailyFatCounter.CounterButton"
-            android:id="@+id/counterfragment_ten_button"
-            android:layout_width="90dp"
-            android:layout_height="60dp"
-            android:layout_margin="8dp"
-            android:text="+ 10g" />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_gravity="center">
+
+                <TextView
+                    android:textAppearance="@style/TextAppearance.DailyFatCounter.Headline4"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text='@{String.format("%.1fg", viewModel.usedFat)}' />
+
+                <TextView
+                    android:textAppearance="?textAppearanceSubtitle2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text='@{String.format("/ %.1fg", viewModel.totalFat)}' />
+
+            </LinearLayout>
+
+            <TextView
+                android:textAppearance="?textAppearanceSubtitle1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center_horizontal"
+                android:text="@string/total_fat" />
+        </FrameLayout>
 
         <Space
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1" />
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="0dp"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:orientation="horizontal">
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <Button
+                style="@style/Widget.DailyFatCounter.CounterButton"
+                android:id="@+id/counterfragment_one_button"
+                android:layout_width="90dp"
+                android:layout_height="60dp"
+                android:layout_margin="8dp"
+                android:onClick="@{() -> viewModel.addFat(1f)}"
+                android:text="+ 1g" />
+
+            <Button
+                style="@style/Widget.DailyFatCounter.CounterButton"
+                android:id="@+id/counterfragment_five_button"
+                android:layout_width="90dp"
+                android:layout_height="60dp"
+                android:layout_margin="8dp"
+                android:onClick="@{() -> viewModel.addFat(5f)}"
+                android:text="+ 5g" />
+
+            <Button
+                style="@style/Widget.DailyFatCounter.CounterButton"
+                android:id="@+id/counterfragment_ten_button"
+                android:layout_width="90dp"
+                android:layout_height="60dp"
+                android:layout_margin="8dp"
+                android:onClick="@{() -> viewModel.addFat(10f)}"
+                android:text="+ 10g" />
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+        </LinearLayout>
     </LinearLayout>
-
-</LinearLayout>
+</layout>

@@ -21,15 +21,12 @@ class CounterFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        val binding: FragmentCounterBinding = DataBindingUtil
+        DataBindingUtil
             .inflate<FragmentCounterBinding>(inflater, R.layout.fragment_counter, container, false)
             .apply {
                 viewModel = this@CounterFragment.viewModel
                 date = Date()
+                return root
         }
-
-        val counter = binding.root.findViewById<CircularCounter>(R.id.counterfragment_counter_view)
-
-        return binding.root
     }
 }

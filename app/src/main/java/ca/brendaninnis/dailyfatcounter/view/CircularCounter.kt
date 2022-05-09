@@ -17,6 +17,7 @@ import androidx.databinding.InverseBindingListener
 import ca.brendaninnis.dailyfatcounter.math.Geometry
 import ca.brendaninnis.dailyfatcounter.R
 import kotlin.math.atan
+
 //
 //@BindingAdapter("custom:progress")
 //fun setProgressFloat(view: CircularCounter, value: Float) {

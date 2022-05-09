@@ -1,4 +1,4 @@
-package ca.brendaninnis.dailyfatcounter
+package ca.brendaninnis.dailyfatcounter.math
 
 import android.graphics.PointF
 

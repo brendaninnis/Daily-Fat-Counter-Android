@@ -4,6 +4,8 @@ plugins {
     id 'androidx.navigation.safeargs.kotlin'
 }
 
+apply plugin: 'kotlin-kapt'
+
 android {
     compileSdk 31
 

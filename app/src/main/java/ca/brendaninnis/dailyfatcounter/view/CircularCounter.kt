@@ -11,9 +11,31 @@ import android.view.MotionEvent.*
 import android.view.View
 import android.view.animation.*
 import androidx.core.content.ContextCompat
-import ca.brendaninnis.dailyfatcounter.Geometry
+import androidx.databinding.BindingAdapter
+import androidx.databinding.InverseBindingAdapter
+import androidx.databinding.InverseBindingListener
+import ca.brendaninnis.dailyfatcounter.math.Geometry
 import ca.brendaninnis.dailyfatcounter.R
 import kotlin.math.atan
+//
+//@BindingAdapter("custom:progress")
+//fun setProgressFloat(view: CircularCounter, value: Float) {
+//    Log.d("CircularCounter", "@BindingAdapter(\"custom:progress\")")
+//    view.progress = value
+//}
+//
+//@InverseBindingAdapter(attribute = "custom:progress", event = "progressAttrChanged")
+//fun getProgressFloat(view: CircularCounter): Float {
+//    Log.d("CircularCounter", "@InverseBindingAdapter(attribute = \"custom:progress\", event = \"progressAttrChanged\")")
+//    return view.progress
+//}
+//
+//@BindingAdapter("progressAttrChanged")
+//fun setProgressListener(view: CircularCounter, progressAttrChanged: InverseBindingListener?) {
+//    Log.d("CircularCounter", "@BindingAdapter(\"progressAttrChanged\")")
+//    progressAttrChanged?.let {
+//    }
+//}
 
 class CircularCounter(context: Context, attrs: AttributeSet) : View(context, attrs), ValueAnimator.AnimatorUpdateListener {
     private var rectF = RectF(0f, 0f, 0f, 0f)
@@ -38,8 +60,12 @@ class CircularCounter(context: Context, attrs: AttributeSet) : View(context, att
 
     private var _progress = 0.8f
     var progress: Float
-        get() = _progress
+        get() {
+            Log.d("CircularCounter", "GET progress")
+            return _progress
+        }
         set(value) {
+            Log.d("CircularCounter", "SET progress")
             animator?.cancel()
             animator = ValueAnimator.ofFloat(progress, value).apply {
                 duration = 350
@@ -48,6 +74,16 @@ class CircularCounter(context: Context, attrs: AttributeSet) : View(context, att
                 start()
             }
         }
+
+    init {
+        context.theme.obtainStyledAttributes(attrs, R.styleable.CircularCounter, 0, 0).apply {
+            try {
+                _progress = getFloat(R.styleable.CircularCounter_progress, 0f)
+            } finally {
+                recycle()
+            }
+        }
+    }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)

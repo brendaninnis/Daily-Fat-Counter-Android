@@ -18,25 +18,6 @@ import ca.brendaninnis.dailyfatcounter.math.Geometry
 import ca.brendaninnis.dailyfatcounter.R
 import kotlin.math.atan
 
-//
-//@BindingAdapter("custom:progress")
-//fun setProgressFloat(view: CircularCounter, value: Float) {
-//    Log.d("CircularCounter", "@BindingAdapter(\"custom:progress\")")
-//    view.progress = value
-//}
-//
-//@InverseBindingAdapter(attribute = "custom:progress", event = "progressAttrChanged")
-//fun getProgressFloat(view: CircularCounter): Float {
-//    Log.d("CircularCounter", "@InverseBindingAdapter(attribute = \"custom:progress\", event = \"progressAttrChanged\")")
-//    return view.progress
-//}
-//
-//@BindingAdapter("progressAttrChanged")
-//fun setProgressListener(view: CircularCounter, progressAttrChanged: InverseBindingListener?) {
-//    Log.d("CircularCounter", "@BindingAdapter(\"progressAttrChanged\")")
-//    progressAttrChanged?.let {
-//    }
-//}
 
 class CircularCounter(context: Context, attrs: AttributeSet) : View(context, attrs), ValueAnimator.AnimatorUpdateListener {
     private var rectF = RectF(0f, 0f, 0f, 0f)
@@ -59,20 +40,19 @@ class CircularCounter(context: Context, attrs: AttributeSet) : View(context, att
     private var lastAngle = 0f
     private var lastQuadrant: Geometry.Quadrant = Geometry.Quadrant.ONE
 
-    private var _progress = 0.8f
+    private var progressWatchers: MutableSet<ProgressWatcher> = mutableSetOf()
+    private var _progress: Float
     var progress: Float
-        get() {
-            Log.d("CircularCounter", "GET progress")
-            return _progress
-        }
+        get() = _progress
         set(value) {
-            Log.d("CircularCounter", "SET progress")
-            animator?.cancel()
-            animator = ValueAnimator.ofFloat(progress, value).apply {
-                duration = 350
-                interpolator = AccelerateDecelerateInterpolator()
-                addUpdateListener(this@CircularCounter)
-                start()
+            if (value != _progress) {
+                animator?.cancel()
+                animator = ValueAnimator.ofFloat(progress, value).apply {
+                    duration = 350
+                    interpolator = AccelerateDecelerateInterpolator()
+                    addUpdateListener(this@CircularCounter)
+                    start()
+                }
             }
         }
 
@@ -154,6 +134,7 @@ class CircularCounter(context: Context, attrs: AttributeSet) : View(context, att
                     _progress = 0f
                 }
                 invalidate()
+                notifyProgressWatchers()
 
                 lastAngle = newAngle
                 lastQuadrant = newQuadrant
@@ -176,6 +157,20 @@ class CircularCounter(context: Context, attrs: AttributeSet) : View(context, att
         drawInnerCircle(canvas)
     }
 
+    fun addProgressWatcher(watcher: ProgressWatcher) {
+        progressWatchers.add(watcher)
+    }
+
+    fun removeProgressWatcher(watcher: ProgressWatcher) {
+        progressWatchers.remove(watcher)
+    }
+
+    private fun notifyProgressWatchers() {
+        progressWatchers.forEach { watcher ->
+            watcher.progressChanged(progress)
+        }
+    }
+
     private fun drawInnerCircle(canvas: Canvas) {
         paint.strokeWidth = thirdThiccness
         canvas.drawOval(rectF, paint)
@@ -195,5 +190,10 @@ class CircularCounter(context: Context, attrs: AttributeSet) : View(context, att
     companion object {
         const val CIRCLE_START_ANGLE    = -90f
         const val CIRCLE_FULL_ROTATION  = 360f
+
+        interface ProgressWatcher {
+            fun progressChanged(newValue: Float)
+        }
+
     }
 }

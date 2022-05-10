@@ -12,24 +12,11 @@ class CounterViewModel: ObservableViewModel() {
         @Bindable get() = (usedFat.get() / totalFat.get())
         set(value) {
             usedFat.set(totalFat.get() * value)
-            notifyPropertyChanged(BR.progress)
         }
-
-    init {
-        observeAndNotifyProgress(usedFat)
-        observeAndNotifyProgress(totalFat)
-    }
-
-    private fun observeAndNotifyProgress(field: Observable) {
-        field.addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
-            override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
-                notifyPropertyChanged(BR.progress)
-            }
-        })
-    }
 
     fun addFat(grams: Float) {
         usedFat.set(usedFat.get() + grams)
+        notifyPropertyChanged(BR.progress)
     }
 
     companion object {

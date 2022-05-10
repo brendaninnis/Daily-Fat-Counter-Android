@@ -44,7 +44,7 @@
                 android:layout_height="210dp"
                 android:layout_marginBottom="8dp"
                 android:padding="@dimen/circleCounterPadding"
-                custom:progress="@{viewModel.progress}" />
+                custom:progress="@={viewModel.progress}" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -54,13 +54,13 @@
 
                 <TextView
                     android:textAppearance="@style/TextAppearance.DailyFatCounter.Headline4"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text='@{String.format("%.1fg", viewModel.usedFat)}' />
 
                 <TextView
                     android:textAppearance="?textAppearanceSubtitle2"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text='@{String.format("/ %.1fg", viewModel.totalFat)}' />
 

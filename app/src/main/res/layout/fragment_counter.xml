@@ -56,7 +56,7 @@
                     android:textAppearance="@style/TextAppearance.DailyFatCounter.Headline4"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text='@{String.format("%.1fg", viewModel.usedFat)}' />
+                    android:text='@{String.format("%.1fg", (float) Math.round(viewModel.usedFat))}' />
 
                 <TextView
                     android:textAppearance="?textAppearanceSubtitle2"

@@ -1,7 +1,6 @@
 package ca.brendaninnis.dailyfatcounter.viewmodel
 
 import androidx.databinding.Bindable
-import androidx.databinding.Observable
 import androidx.databinding.ObservableFloat
 import ca.brendaninnis.dailyfatcounter.BR
 

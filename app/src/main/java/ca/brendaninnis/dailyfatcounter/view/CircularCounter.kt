@@ -5,15 +5,10 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
-import android.util.Log
 import android.view.MotionEvent
 import android.view.MotionEvent.*
 import android.view.View
 import android.view.animation.*
-import androidx.core.content.ContextCompat
-import androidx.databinding.BindingAdapter
-import androidx.databinding.InverseBindingAdapter
-import androidx.databinding.InverseBindingListener
 import ca.brendaninnis.dailyfatcounter.math.Geometry
 import ca.brendaninnis.dailyfatcounter.R
 import kotlin.math.atan
@@ -29,12 +24,6 @@ class CircularCounter(context: Context, attrs: AttributeSet) : View(context, att
         style = Paint.Style.STROKE
         strokeCap = Paint.Cap.ROUND
     }
-    private val colors = intArrayOf(
-        ContextCompat.getColor(context, R.color.green),
-        ContextCompat.getColor(context, R.color.yellow),
-        ContextCompat.getColor(context, R.color.yellow),
-        ContextCompat.getColor(context, R.color.green)
-    )
     private var animator: ValueAnimator? = null
     private var touchLocation = PointF(0f, 0f)
     private var lastAngle = 0f
@@ -72,9 +61,6 @@ class CircularCounter(context: Context, attrs: AttributeSet) : View(context, att
             inset(halfThiccness + paddingStart, halfThiccness + paddingTop)
         }
         circleOrigin = PointF(rectF.centerX(), rectF.centerY())
-        SweepGradient(w * 0.5f, h * 0.5f, colors, null).let {
-            paint.shader = it
-        }
     }
 
     @SuppressLint("ClickableViewAccessibility") // TODO: Add accessibility features to this app
@@ -149,9 +135,22 @@ class CircularCounter(context: Context, attrs: AttributeSet) : View(context, att
         return false
     }
 
+    @SuppressLint("DrawAllocation") // Must allocate new SweepGradient with colors for each draw
     override fun onDraw(canvas: Canvas) {
         // call the super method to keep any drawing from the parent side.
         super.onDraw(canvas)
+
+        SweepGradient(width * 0.5f,
+                      height * 0.5f,
+                      intArrayOf(
+                          Colors.getStartGradientColor(context, _progress),
+                          Colors.getEndGradientColor(context, _progress),
+                          Colors.getEndGradientColor(context, _progress),
+                          Colors.getStartGradientColor(context, _progress)
+                      ),
+                      null).let {
+            paint.shader = it
+        }
 
         drawProgressCircle(canvas)
         drawInnerCircle(canvas)

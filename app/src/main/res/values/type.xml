@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="TextAppearance.DailyFatCounter.Headline4" parent="TextAppearance.MaterialComponents.Headline4">
+        <item name="android:textColor">@android:color/primary_text_light</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+</resources>

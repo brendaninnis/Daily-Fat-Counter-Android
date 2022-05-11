@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="counterThiccness">16dp</dimen>
+    <dimen name="counterInnerThiccness">4dp</dimen>
+    <dimen name="circleCounterPadding">22dp</dimen>
+</resources>

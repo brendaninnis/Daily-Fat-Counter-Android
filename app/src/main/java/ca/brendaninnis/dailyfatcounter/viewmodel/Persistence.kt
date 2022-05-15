@@ -22,23 +22,22 @@ import java.io.FileInputStream
 
 class Persistence(private val context: Context,
                   private val historyViewModel: HistoryViewModel) {
-    private val historyFile = File(context.filesDir, "history.data")
 
-    fun start() {
-        loadHistory(historyViewModel)
-    }
-
-    private fun loadHistory(historyViewModel: HistoryViewModel) {
-        historyViewModel.viewModelScope.launch {
-            val history = withContext(Dispatchers.IO) {
-                if (!historyFile.exists()) {
-                    return@withContext arrayOf()
-                }
-                DailyFatRecord.fromJson(historyFile.readText())
-            }
-            historyViewModel.history.addAll(history)
-        }
-    }
+//    fun start() {
+//        loadHistory(historyViewModel)
+//    }
+//
+//    private fun loadHistory(historyViewModel: HistoryViewModel) {
+//        historyViewModel.viewModelScope.launch {
+//            val history = withContext(Dispatchers.IO) {
+//                if (!historyFile.exists()) {
+//                    return@withContext arrayOf()
+//                }
+//                DailyFatRecord.fromJson(historyFile.readText())
+//            }
+//            historyViewModel.history.addAll(history)
+//        }
+//    }
 
     companion object {
         val USED_FAT_PREF_KEY     = floatPreferencesKey("used_fat")

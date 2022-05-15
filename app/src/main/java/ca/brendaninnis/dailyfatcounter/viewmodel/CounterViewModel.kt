@@ -7,50 +7,67 @@ import androidx.databinding.ObservableFloat
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import ca.brendaninnis.dailyfatcounter.BR
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
+import ca.brendaninnis.dailyfatcounter.datastore.CounterDataRepository
+import ca.brendaninnis.dailyfatcounter.datastore.DEFAULT_DAILY_TOTAL_FAT
+import ca.brendaninnis.dailyfatcounter.extensions.getOrDefault
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
-class CounterViewModel(dataStore: DataStore<Preferences>): ObservableViewModel() {
+
+class CounterViewModel(counterDataRepository: CounterDataRepository): ObservableViewModel() {
     var usedFat = ObservableFloat(0.0f)
     var totalFat = ObservableFloat(DEFAULT_DAILY_TOTAL_FAT)
     var progress: Float
         @Bindable get() = (usedFat.get() / totalFat.get())
         set(value) {
             usedFat.set(totalFat.get() * value)
+            Log.w("TESTY", "set used fat to ${totalFat.get() * value}")
         }
 
     init {
+        collectCounterDataIntoObservable(counterDataRepository)
+        observeAndPersistCounterData(counterDataRepository)
+    }
+
+    private fun collectCounterDataIntoObservable(counterDataRepository: CounterDataRepository) {
         viewModelScope.launch {
-            usedFat.set(getFloatOrDefault(dataStore, USED_FAT_KEY, 0f))
-            totalFat.set(getFloatOrDefault(dataStore, TOTAL_FAT_KEY, DEFAULT_DAILY_TOTAL_FAT))
-            notifyPropertyChanged(BR.progress)
-            observeAndPersistFloat(usedFat, USED_FAT_KEY, dataStore)
-            observeAndPersistFloat(totalFat, TOTAL_FAT_KEY, dataStore)
+            counterDataRepository.counterDataFlow.collect { counterData ->
+                var didChange = false
+                if (usedFat.get() != counterData.usedFat) {
+                    Log.w("TESTY", "used fat did change to ${counterData.usedFat}")
+                    usedFat.set(counterData.usedFat)
+                    didChange = true
+                }
+                if (totalFat.get() != counterData.totalFat) {
+                    totalFat.set(counterData.totalFat)
+                    didChange = true
+                }
+                if (didChange) {
+                    notifyPropertyChanged(BR.progress)
+                }
+            }
         }
     }
 
-    private suspend fun getFloatOrDefault(dataStore: DataStore<Preferences>,
-                                  key: Preferences.Key<Float>,
-                                  default: Float): Float {
-        return dataStore.data.map { preferences ->
-            preferences[key] ?: default
-        }.first()
-    }
-
-    private fun observeAndPersistFloat(float: ObservableFloat,
-                                       key: Preferences.Key<Float>,
-                                       preferences: DataStore<Preferences>) {
-        float.addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
+    private fun observeAndPersistCounterData(counterDataRepository: CounterDataRepository) {
+        usedFat.addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
             override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
-                viewModelScope.launch {
-                    preferences.edit { prefs ->
-                        prefs[key] = (sender as ObservableFloat).get()
+                (sender as? ObservableFloat)?.let {
+                    viewModelScope.launch {
+                        counterDataRepository.updateUsedFat(it.get())
+                    }
+                }
+            }
+        })
+        totalFat.addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
+            override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
+                (sender as? ObservableFloat)?.let {
+                    viewModelScope.launch {
+                        counterDataRepository.updateTotalFat(it.get())
                     }
                 }
             }
@@ -62,15 +79,9 @@ class CounterViewModel(dataStore: DataStore<Preferences>): ObservableViewModel()
         notifyPropertyChanged(BR.progress)
     }
 
-    class CounterViewModelFactory(private val preferences: DataStore<Preferences>) : ViewModelProvider.Factory {
+    class CounterViewModelFactory(private val counterDataRepository: CounterDataRepository) : ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-            return CounterViewModel(preferences) as T
+            return CounterViewModel(counterDataRepository) as T
         }
-    }
-
-    companion object {
-        const val DEFAULT_DAILY_TOTAL_FAT = 45.0f
-        val USED_FAT_KEY = floatPreferencesKey("used_fat")
-        val TOTAL_FAT_KEY = floatPreferencesKey("total_fat")
     }
 }

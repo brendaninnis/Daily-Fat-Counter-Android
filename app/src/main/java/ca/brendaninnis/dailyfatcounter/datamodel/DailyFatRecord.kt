@@ -31,8 +31,8 @@ class DailyFatRecord(private val id: Int,
 
     companion object {
         @JvmStatic
-        fun fromJson(json: String): Array<DailyFatRecord> = Gson()
-            .fromJson(json, Array<DailyFatRecord>::class.java)
+        fun fromJson(json: String): ArrayList<DailyFatRecord> = Gson()
+            .fromJson(json, Array<DailyFatRecord>::class.java).toCollection(ArrayList())
 
         fun createDailyFatRecord(year: Int,
                                  month: Int,

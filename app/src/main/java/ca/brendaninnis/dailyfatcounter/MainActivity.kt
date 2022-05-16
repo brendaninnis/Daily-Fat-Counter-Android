@@ -30,11 +30,15 @@ class MainActivity : AppCompatActivity() {
     private val historyFile by lazy {
         File(filesDir, "history.data")
     }
-    private val counterDataRepository = CounterDataRepository(dataStore)
+    private val counterDataRepository by lazy {
+        CounterDataRepository(dataStore)
+    }
     private val counterViewModel: CounterViewModel by viewModels {
         CounterViewModel.CounterViewModelFactory(counterDataRepository)
     }
-    private val historyViewModel: HistoryViewModel by viewModels()
+    private val historyViewModel: HistoryViewModel by viewModels {
+        HistoryViewModel.HistoryViewModelFactory(historyFile)
+    }
     private val calendar by lazy {
         Calendar.getInstance(TimeZone.getDefault(), Locale.getDefault())
     }
@@ -44,17 +48,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        counterViewModel.progress
-
         // Setup the Bottom Navigation Bar
         findViewById<BottomNavigationView>(R.id.bottom_navigation_view)
             .setupWithNavController(findNavController(R.id.nav_host_fragment))
-
-        if (savedInstanceState == null) {
-            historyViewModel.viewModelScope.launch {
-                historyViewModel.load(historyFile)
-            }
-        }
     }
 
     override fun onResume() {
@@ -108,6 +104,7 @@ class MainActivity : AppCompatActivity() {
             counterViewModel.usedFat.get(),
             counterViewModel.totalFat.get()
         )
+        historyViewModel.addDailyFatRecord(dailyFatRecord)
         counterViewModel.resetUsedFat()
     }
 }

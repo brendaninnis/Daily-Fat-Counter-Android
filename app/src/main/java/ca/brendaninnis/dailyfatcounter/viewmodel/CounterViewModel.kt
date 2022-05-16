@@ -73,7 +73,7 @@ class CounterViewModel(counterDataRepository: CounterDataRepository): Observable
     }
 
     class CounterViewModelFactory(private val counterDataRepository: CounterDataRepository) : ViewModelProvider.Factory {
-        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
             return CounterViewModel(counterDataRepository) as T
         }
     }

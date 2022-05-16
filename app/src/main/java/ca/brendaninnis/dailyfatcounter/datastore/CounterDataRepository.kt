@@ -3,16 +3,19 @@ package ca.brendaninnis.dailyfatcounter.datastore
 import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.*
+import ca.brendaninnis.dailyfatcounter.math.SECONDS_PER_DAY
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import java.io.IOException
+import java.util.*
 
 const val DEFAULT_DAILY_TOTAL_FAT = 45.0f
 
 data class CounterData(
     val usedFat: Float,
-    val totalFat: Float
+    val totalFat: Float,
+    val resetTime: Long
 )
 
 class CounterDataRepository(private val dataStore: DataStore<Preferences>) {
@@ -48,9 +51,23 @@ class CounterDataRepository(private val dataStore: DataStore<Preferences>) {
         }
     }
 
+    suspend fun checkResetTimeElapsed(timestamp: Long): Boolean {
+        var retVal = false
+        dataStore.edit { preferences ->
+            val lastCheck = preferences[PreferenceKeys.LAST_CHECK] ?: 0L
+            val resetTime = preferences[PreferenceKeys.RESET_TIME] ?: 0L
+            val nowDays = (timestamp + TimeZone.getDefault().rawOffset - resetTime) / SECONDS_PER_DAY
+            val thenDays = (lastCheck + TimeZone.getDefault().rawOffset - resetTime) / SECONDS_PER_DAY
+            retVal = nowDays > thenDays && lastCheck > 0
+            preferences[PreferenceKeys.LAST_CHECK] = timestamp
+        }
+        return retVal
+    }
+
     private fun mapCounterData(preferences: Preferences): CounterData = CounterData(
         usedFat = preferences[PreferenceKeys.USED_FAT] ?: 0f,
-        totalFat = preferences[PreferenceKeys.TOTAL_FAT] ?: DEFAULT_DAILY_TOTAL_FAT
+        totalFat = preferences[PreferenceKeys.TOTAL_FAT] ?: DEFAULT_DAILY_TOTAL_FAT,
+        resetTime = preferences[PreferenceKeys.RESET_TIME] ?: 0L
     )
 
     companion object {

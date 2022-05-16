@@ -1,55 +1,38 @@
 package ca.brendaninnis.dailyfatcounter.viewmodel
 
-import android.util.Log
 import androidx.databinding.Bindable
 import androidx.databinding.Observable
 import androidx.databinding.ObservableFloat
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.edit
+import androidx.databinding.ObservableLong
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import ca.brendaninnis.dailyfatcounter.BR
 import ca.brendaninnis.dailyfatcounter.datastore.CounterDataRepository
 import ca.brendaninnis.dailyfatcounter.datastore.DEFAULT_DAILY_TOTAL_FAT
-import ca.brendaninnis.dailyfatcounter.extensions.getOrDefault
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 
 class CounterViewModel(counterDataRepository: CounterDataRepository): ObservableViewModel() {
     var usedFat = ObservableFloat(0.0f)
     var totalFat = ObservableFloat(DEFAULT_DAILY_TOTAL_FAT)
+    var resetTime = ObservableLong(0L)
     var progress: Float
         @Bindable get() = (usedFat.get() / totalFat.get())
         set(value) {
             usedFat.set(totalFat.get() * value)
-            Log.w("TESTY", "set used fat to ${totalFat.get() * value}")
         }
 
     init {
-        collectCounterDataIntoObservable(counterDataRepository)
-        observeAndPersistCounterData(counterDataRepository)
-    }
-
-    private fun collectCounterDataIntoObservable(counterDataRepository: CounterDataRepository) {
         viewModelScope.launch {
-            counterDataRepository.counterDataFlow.collect { counterData ->
-                var didChange = false
-                if (usedFat.get() != counterData.usedFat) {
-                    Log.w("TESTY", "used fat did change to ${counterData.usedFat}")
-                    usedFat.set(counterData.usedFat)
-                    didChange = true
-                }
-                if (totalFat.get() != counterData.totalFat) {
-                    totalFat.set(counterData.totalFat)
-                    didChange = true
-                }
-                if (didChange) {
-                    notifyPropertyChanged(BR.progress)
-                }
+            counterDataRepository.counterDataFlow.first().let {
+                usedFat.set(it.usedFat)
+                totalFat.set(it.totalFat)
+                resetTime.set(it.resetTime)
             }
+            notifyPropertyChanged(BR.progress)
+            observeAndPersistCounterData(counterDataRepository)
         }
     }
 
@@ -76,6 +59,16 @@ class CounterViewModel(counterDataRepository: CounterDataRepository): Observable
 
     fun addFat(grams: Float) {
         usedFat.set(usedFat.get() + grams)
+        notifyPropertyChanged(BR.progress)
+    }
+
+    fun resetUsedFat() {
+        usedFat.set(0f)
+        notifyPropertyChanged(BR.progress)
+    }
+
+    fun updateTotalFat(grams: Float) {
+        totalFat.set(grams)
         notifyPropertyChanged(BR.progress)
     }
 

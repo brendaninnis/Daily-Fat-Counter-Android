@@ -39,18 +39,18 @@ class CounterViewModel(counterDataRepository: CounterDataRepository): Observable
     private fun observeAndPersistCounterData(counterDataRepository: CounterDataRepository) {
         usedFat.addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
             override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
-                (sender as? ObservableFloat)?.let {
+                (sender as? ObservableFloat)?.let { value ->
                     viewModelScope.launch {
-                        counterDataRepository.updateUsedFat(it.get())
+                        counterDataRepository.updateUsedFat(value.get())
                     }
                 }
             }
         })
         totalFat.addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
             override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
-                (sender as? ObservableFloat)?.let {
+                (sender as? ObservableFloat)?.let { value ->
                     viewModelScope.launch {
-                        counterDataRepository.updateTotalFat(it.get())
+                        counterDataRepository.updateTotalFat(value.get())
                     }
                 }
             }

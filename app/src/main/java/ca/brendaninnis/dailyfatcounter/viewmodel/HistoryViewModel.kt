@@ -1,5 +1,6 @@
 package ca.brendaninnis.dailyfatcounter.viewmodel
 
+import android.widget.Toast
 import androidx.lifecycle.*
 import ca.brendaninnis.dailyfatcounter.datamodel.DailyFatRecord
 import ca.brendaninnis.dailyfatcounter.extensions.json
@@ -19,12 +20,21 @@ class HistoryViewModel(private val historyFile: File): ObservableViewModel() {
         }
     }
 
-    fun addDailyFatRecord(dailyFatRecord: DailyFatRecord) {
+    fun addDailyFatRecord(dailyFatRecord: DailyFatRecord,
+                          errorCallback: ((String) -> Unit)? = null) {
         viewModelScope.launch {
             initialLoadJob.join()
-            historyLiveData.value?.toMutableList()?.apply {
-                add(dailyFatRecord)
-                save(this)
+            historyLiveData.value?.toMutableList()?.let { history ->
+                if (dailyFatRecord.id == history[0].id) {
+                    errorCallback?.let { callback ->
+                        withContext(Dispatchers.Main) {
+                            callback("Daily fat already recorded for ${dailyFatRecord.dateLabel}")
+                        }
+                    }
+                    return@let
+                }
+                history.add(0, dailyFatRecord)
+                save(history)
             }
         }
     }

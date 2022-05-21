@@ -3,4 +3,5 @@
     <dimen name="counterThiccness">16dp</dimen>
     <dimen name="counterInnerThiccness">4dp</dimen>
     <dimen name="circleCounterPadding">22dp</dimen>
+    <dimen name="rowItemMarginVertical">12dp</dimen>
 </resources>

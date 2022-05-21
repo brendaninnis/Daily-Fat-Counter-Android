@@ -5,18 +5,29 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import ca.brendaninnis.dailyfatcounter.R
+import ca.brendaninnis.dailyfatcounter.databinding.FragmentHistoryBinding
+import ca.brendaninnis.dailyfatcounter.view.HistoryAdapter
 import ca.brendaninnis.dailyfatcounter.viewmodel.HistoryViewModel
 
 class HistoryFragment : Fragment() {
     val viewModel: HistoryViewModel by activityViewModels()
+    private val adapter = HistoryAdapter()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_history, container, false)
+        val binding = DataBindingUtil
+            .inflate<FragmentHistoryBinding>(inflater, R.layout.fragment_history, container, false)
+            .apply {
+                historyRecycler.adapter = adapter
+            }
+        viewModel.historyLiveData.observe(viewLifecycleOwner) { history ->
+            adapter.submitList(history)
+        }
+        return binding.root
     }
 }

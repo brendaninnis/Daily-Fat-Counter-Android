@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
@@ -104,7 +105,9 @@ class MainActivity : AppCompatActivity() {
             counterViewModel.usedFat.get(),
             counterViewModel.totalFat.get()
         )
-        historyViewModel.addDailyFatRecord(dailyFatRecord)
+        historyViewModel.addDailyFatRecord(dailyFatRecord) { error ->
+            Toast.makeText(this, error, Toast.LENGTH_LONG).show()
+        }
         counterViewModel.resetUsedFat()
     }
 }

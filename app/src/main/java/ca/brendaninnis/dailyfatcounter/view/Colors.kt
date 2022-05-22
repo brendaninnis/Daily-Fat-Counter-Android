@@ -4,6 +4,8 @@ import android.content.Context
 import android.graphics.Color
 import androidx.core.content.ContextCompat
 import ca.brendaninnis.dailyfatcounter.R
+import java.lang.Math.round
+import kotlin.math.roundToInt
 
 object Colors {
     fun getStartGradientColor(context: Context, progress: Float): Int {
@@ -25,26 +27,26 @@ object Colors {
     }
 
     private fun getColor(fromColor: Int, toColor: Int, percent: Float): Int {
-        return Color.valueOf(
+        return Color.rgb(
             getTransition(
-                Color.red(fromColor).toFloat() / 255.0f,
-                Color.red(toColor).toFloat() / 255.0f,
+                Color.red(fromColor),
+                Color.red(toColor),
                 percent
             ),
             getTransition(
-                Color.green(fromColor).toFloat() / 255.0f,
-                Color.green(toColor).toFloat() / 255.0f,
+                Color.green(fromColor),
+                Color.green(toColor),
                 percent
             ),
             getTransition(
-                Color.blue(fromColor).toFloat() / 255.0f,
-                Color.blue(toColor).toFloat() / 255.0f,
+                Color.blue(fromColor),
+                Color.blue(toColor),
                 percent
             )
-        ).toArgb()
+        )
     }
 
-    private fun getTransition(start: Float,
-                              end: Float,
-                              percent: Float) = start + (end - start) * percent
+    private fun getTransition(start: Int,
+                              end: Int,
+                              percent: Float) = start + ((end - start) * percent).roundToInt()
 }

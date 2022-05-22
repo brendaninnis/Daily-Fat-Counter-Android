@@ -1,6 +1,6 @@
 package ca.brendaninnis.dailyfatcounter.datamodel
 
-import android.icu.text.DateFormatSymbols
+import java.text.DateFormatSymbols
 import com.google.gson.Gson
 
 const val DAY_MASK      = 0x000000FF

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:custom="http://schemas.android.com/apk/res-auto">
     <LinearLayout
         android:paddingTop="@dimen/historyItemPadding"
         android:paddingBottom="@dimen/historyItemPadding"
@@ -15,14 +16,15 @@
             android:textAppearance="?textAppearanceListItem"
             android:layout_width="160dp"
             android:layout_height="wrap_content"
-            android:text="May 20, 2022" />
+            android:text="December 31, 1969" />
 
-        <com.google.android.material.progressindicator.LinearProgressIndicator
+        <ca.brendaninnis.dailyfatcounter.view.LinearCounter
             android:id="@+id/graph"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_gravity="center"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            custom:progress="0.0"/>
 
     </LinearLayout>
 </layout>

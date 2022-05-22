@@ -1,59 +1,22 @@
 package ca.brendaninnis.dailyfatcounter.view
 
-import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.MotionEvent.*
-import android.view.View
-import android.view.animation.*
 import ca.brendaninnis.dailyfatcounter.math.Geometry
-import ca.brendaninnis.dailyfatcounter.R
 import kotlin.math.atan
 
 
-class CircularCounter(context: Context, attrs: AttributeSet) : View(context, attrs), ValueAnimator.AnimatorUpdateListener {
+class CircularCounter(context: Context, attrs: AttributeSet) : LinearCounter(context, attrs) {
     private var rectF = RectF(0f, 0f, 0f, 0f)
     private var circleOrigin = PointF(0f, 0f)
-    private val thiccness = context.resources.getDimension(R.dimen.counterThiccness)
-    private val halfThiccness = thiccness * 0.5f
-    private val thirdThiccness = thiccness * 0.33f
-    private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        style = Paint.Style.STROKE
-        strokeCap = Paint.Cap.ROUND
-    }
-    private var animator: ValueAnimator? = null
     private var touchLocation = PointF(0f, 0f)
     private var lastAngle = 0f
     private var lastQuadrant: Geometry.Quadrant = Geometry.Quadrant.ONE
-
     private var progressWatchers: MutableSet<ProgressWatcher> = mutableSetOf()
-    private var _progress: Float
-    var progress: Float
-        get() = _progress
-        set(value) {
-            if (value != _progress) {
-                animator?.cancel()
-                animator = ValueAnimator.ofFloat(progress, value).apply {
-                    duration = 350
-                    interpolator = AccelerateDecelerateInterpolator()
-                    addUpdateListener(this@CircularCounter)
-                    start()
-                }
-            }
-        }
-
-    init {
-        context.theme.obtainStyledAttributes(attrs, R.styleable.CircularCounter, 0, 0).apply {
-            try {
-                _progress = getFloat(R.styleable.CircularCounter_progress, 0f)
-            } finally {
-                recycle()
-            }
-        }
-    }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
@@ -137,16 +100,13 @@ class CircularCounter(context: Context, attrs: AttributeSet) : View(context, att
 
     @SuppressLint("DrawAllocation") // Must allocate new SweepGradient with colors for each draw
     override fun onDraw(canvas: Canvas) {
-        // call the super method to keep any drawing from the parent side.
-        super.onDraw(canvas)
-
         SweepGradient(width * 0.5f,
                       height * 0.5f,
                       intArrayOf(
-                          Colors.getStartGradientColor(context, _progress),
-                          Colors.getEndGradientColor(context, _progress),
-                          Colors.getEndGradientColor(context, _progress),
-                          Colors.getStartGradientColor(context, _progress)
+                          Colors.getStartGradientColor(context, progress),
+                          Colors.getEndGradientColor(context, progress),
+                          Colors.getEndGradientColor(context, progress),
+                          Colors.getStartGradientColor(context, progress)
                       ),
                       null).let {
             paint.shader = it
@@ -177,13 +137,7 @@ class CircularCounter(context: Context, attrs: AttributeSet) : View(context, att
 
     private fun drawProgressCircle(canvas: Canvas) {
         paint.strokeWidth = thiccness
-        canvas.drawArc(rectF, CIRCLE_START_ANGLE, _progress * CIRCLE_FULL_ROTATION, false, paint)
-    }
-
-    // MARK: ValueAnimator.AnimatorUpdateListener methods
-    override fun onAnimationUpdate(animator: ValueAnimator) {
-        _progress = animator.animatedValue as Float
-        invalidate()
+        canvas.drawArc(rectF, CIRCLE_START_ANGLE, progress.coerceAtMost(1.0f) * CIRCLE_FULL_ROTATION, false, paint)
     }
 
     companion object {
@@ -193,6 +147,5 @@ class CircularCounter(context: Context, attrs: AttributeSet) : View(context, att
         interface ProgressWatcher {
             fun progressChanged(newValue: Float)
         }
-
     }
 }

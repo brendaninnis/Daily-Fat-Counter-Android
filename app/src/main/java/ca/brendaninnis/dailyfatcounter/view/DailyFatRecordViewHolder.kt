@@ -14,7 +14,7 @@ class DailyFatRecordViewHolder(
 
     fun bind(record: DailyFatRecord) {
         binding.dateLabel.text = record.dateLabel
-        binding.graph.isIndeterminate = true
+        binding.graph.progress = record.usedFat / record.totalFat
     }
 
     companion object {

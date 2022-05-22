@@ -3,16 +3,20 @@ package ca.brendaninnis.dailyfatcounter
 import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.databinding.DataBindingUtil
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavArgument
+import androidx.navigation.NavController
+import androidx.navigation.NavDestination
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
+import ca.brendaninnis.dailyfatcounter.databinding.ActivityMainBinding
 import ca.brendaninnis.dailyfatcounter.datamodel.DailyFatRecord
 import ca.brendaninnis.dailyfatcounter.datastore.CounterDataRepository
 import ca.brendaninnis.dailyfatcounter.math.SECONDS_PER_DAY
@@ -47,11 +51,10 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        val binding: ActivityMainBinding = DataBindingUtil
+            .setContentView(this, R.layout.activity_main)
 
-        // Setup the Bottom Navigation Bar
-        findViewById<BottomNavigationView>(R.id.bottom_navigation_view)
-            .setupWithNavController(findNavController(R.id.nav_host_fragment))
+        setupBottomNavigationView(binding)
     }
 
     override fun onResume() {
@@ -66,6 +69,19 @@ class MainActivity : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
         stopResetTimer()
+    }
+
+    private fun setupBottomNavigationView(binding: ActivityMainBinding) {
+        binding.navHostFragment.getFragment<NavHostFragment>().navController.let { navController ->
+            navController.addOnDestinationChangedListener { _, destination, arguments ->
+                when (destination.id) {
+                    R.id.historyFragment -> {
+                        arguments?.putSerializable("historyFile", historyFile)
+                    }
+                }
+            }
+            binding.bottomNavigationView.setupWithNavController(navController)
+        }
     }
 
     private suspend fun checkDailyFatReset(timestamp: Long) {

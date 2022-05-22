@@ -9,11 +9,11 @@
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/history_recycler"
+            android:paddingStart="@dimen/recyclerStartPadding"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:paddingVertical="@dimen/rowItemMarginVertical"
             android:scrollbars="vertical"
-            app:layoutManager="LinearLayoutManager" />
-
+            app:layoutManager="LinearLayoutManager"
+            tools:ignore="RtlSymmetry" />
     </FrameLayout>
 </layout>

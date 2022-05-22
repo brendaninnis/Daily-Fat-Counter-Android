@@ -3,5 +3,6 @@
     <dimen name="counterThiccness">16dp</dimen>
     <dimen name="counterInnerThiccness">4dp</dimen>
     <dimen name="circleCounterPadding">22dp</dimen>
-    <dimen name="rowItemMarginVertical">12dp</dimen>
+    <dimen name="historyItemPadding">8dp</dimen>
+    <dimen name="recyclerStartPadding">16dp</dimen>
 </resources>

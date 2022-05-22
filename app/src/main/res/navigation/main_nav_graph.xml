@@ -14,7 +14,11 @@
         android:id="@+id/historyFragment"
         android:name="ca.brendaninnis.dailyfatcounter.fragment.HistoryFragment"
         android:label="fragment_history"
-        tools:layout="@layout/fragment_history" />
+        tools:layout="@layout/fragment_history" >
+        <argument
+            android:name="historyFile"
+            app:argType="java.io.File" />
+    </fragment>
     <fragment
         android:id="@+id/settingsFragment"
         android:name="ca.brendaninnis.dailyfatcounter.fragment.SettingsFragment"

@@ -1,5 +1,6 @@
 package ca.brendaninnis.dailyfatcounter.viewmodel
 
+import android.view.View
 import androidx.lifecycle.*
 import ca.brendaninnis.dailyfatcounter.datamodel.DailyFatRecord
 import ca.brendaninnis.dailyfatcounter.extensions.json
@@ -10,6 +11,13 @@ import kotlinx.coroutines.withContext
 import java.io.File
 
 class HistoryViewModel(private val historyFile: File): ObservableViewModel() {
+    val historyIsEmptyLiveData: MediatorLiveData<Int> by lazy {
+        MediatorLiveData<Int>().apply {
+            addSource(historyLiveData) {
+                historyIsEmptyLiveData.value = if (it.isEmpty()) View.GONE else View.VISIBLE
+            }
+        }
+    }
     var historyLiveData = MutableLiveData<List<DailyFatRecord>>(listOf())
     private val initialLoadJob: Job
 

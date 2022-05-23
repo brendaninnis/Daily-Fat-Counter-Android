@@ -22,7 +22,7 @@ class DailyFatRecord(val id: Int,
             return String.format(MDY_STRING_FORMAT, monthLabel, day, year)
         }
 
-    private val monthLabel: String
+    val monthLabel: String
         get() {
             val month = (id and MONTH_MASK) shr MONTH_SHIFT
             return DateFormatSymbols().months[month - 1]

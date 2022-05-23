@@ -1,6 +1,5 @@
 package ca.brendaninnis.dailyfatcounter.viewmodel
 
-import android.widget.Toast
 import androidx.lifecycle.*
 import ca.brendaninnis.dailyfatcounter.datamodel.DailyFatRecord
 import ca.brendaninnis.dailyfatcounter.extensions.json

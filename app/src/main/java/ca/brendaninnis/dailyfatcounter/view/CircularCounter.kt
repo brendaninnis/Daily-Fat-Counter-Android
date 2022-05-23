@@ -1,11 +1,13 @@
 package ca.brendaninnis.dailyfatcounter.view
 
+import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.MotionEvent.*
+import android.view.animation.AccelerateDecelerateInterpolator
 import ca.brendaninnis.dailyfatcounter.math.Geometry
 import kotlin.math.atan
 
@@ -17,7 +19,19 @@ class CircularCounter(context: Context, attrs: AttributeSet) : LinearCounter(con
     private var lastAngle = 0f
     private var lastQuadrant: Geometry.Quadrant = Geometry.Quadrant.ONE
     private var progressWatchers: MutableSet<ProgressWatcher> = mutableSetOf()
-
+    override var progress: Float
+        get() = _progress
+        set(value) {
+            if (value != _progress) {
+                animator?.cancel()
+                animator = ValueAnimator.ofFloat(progress, value).apply {
+                    duration = ANIMATION_DURATION
+                    interpolator = AccelerateDecelerateInterpolator()
+                    addUpdateListener(this@CircularCounter)
+                    start()
+                }
+            }
+        }
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
         rectF = RectF(0f, 0f, w.toFloat(), h.toFloat()).apply {

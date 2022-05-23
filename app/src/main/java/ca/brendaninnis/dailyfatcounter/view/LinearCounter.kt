@@ -12,7 +12,7 @@ import ca.brendaninnis.dailyfatcounter.R
 open class LinearCounter(context: Context,
                          attrs: AttributeSet) : View(context, attrs),
                                                 ValueAnimator.AnimatorUpdateListener  {
-    private var animator: ValueAnimator? = null
+    protected var animator: ValueAnimator? = null
     protected val thiccness = context.resources.getDimension(R.dimen.counterThiccness)
     protected val halfThiccness = thiccness * 0.5f
     protected val thirdThiccness = thiccness * 0.33f
@@ -21,11 +21,10 @@ open class LinearCounter(context: Context,
         strokeCap = Paint.Cap.ROUND
     }
     protected var _progress: Float
-    var progress: Float
+    open var progress: Float
         get() = _progress
         set(value) {
-            if (value != _progress) {
-                animator?.cancel()
+            if (animator == null && value != _progress) {
                 animator = ValueAnimator.ofFloat(progress, value).apply {
                     duration = ANIMATION_DURATION
                     interpolator = AccelerateDecelerateInterpolator()
@@ -91,6 +90,6 @@ open class LinearCounter(context: Context,
     }
 
     companion object {
-        protected const val ANIMATION_DURATION = 350L
+        const val ANIMATION_DURATION = 350L
     }
 }

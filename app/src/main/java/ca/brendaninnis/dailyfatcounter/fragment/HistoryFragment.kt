@@ -1,21 +1,18 @@
 package ca.brendaninnis.dailyfatcounter.fragment
 
-import android.content.Context
-import android.graphics.Rect
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.RecyclerView
 import ca.brendaninnis.dailyfatcounter.R
 import ca.brendaninnis.dailyfatcounter.databinding.FragmentHistoryBinding
-import ca.brendaninnis.dailyfatcounter.view.HistoryAdapter
+import ca.brendaninnis.dailyfatcounter.adapter.HistoryAdapter
+import ca.brendaninnis.dailyfatcounter.adapter.HistoryRow
 import ca.brendaninnis.dailyfatcounter.viewmodel.HistoryViewModel
 
 class HistoryFragment : Fragment() {
@@ -38,7 +35,16 @@ class HistoryFragment : Fragment() {
                 historyRecycler.adapter = adapter
             }
         viewModel.historyLiveData.observe(viewLifecycleOwner) { history ->
-            adapter.submitList(history)
+            val list = ArrayList<HistoryRow>()
+            var currentMonth = ""
+            history.forEach { dailyFatRecord ->
+                if (dailyFatRecord.monthLabel != currentMonth) {
+                    currentMonth = dailyFatRecord.monthLabel
+                    list.add(HistoryRow(currentMonth, null))
+                }
+                list.add(HistoryRow(null, dailyFatRecord))
+            }
+            adapter.submitList(list)
         }
         return binding.root
     }

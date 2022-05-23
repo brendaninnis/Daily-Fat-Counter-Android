@@ -1,8 +1,9 @@
-package ca.brendaninnis.dailyfatcounter.view
+package ca.brendaninnis.dailyfatcounter.adapter
 
 import androidx.databinding.BindingAdapter
 import androidx.databinding.InverseBindingAdapter
 import androidx.databinding.InverseBindingListener
+import ca.brendaninnis.dailyfatcounter.view.CircularCounter
 
 object CircularCounterBindingAdapters {
     @BindingAdapter("custom:progress")

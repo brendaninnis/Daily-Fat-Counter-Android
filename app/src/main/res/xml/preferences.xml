@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <PreferenceCategory
+        app:key="daily_fat_controls"
+        app:title="Daily Fat Controls">
+        <ca.brendaninnis.dailyfatcounter.view.NumberPickerPreference
+            app:key="@string/total_fat_pref_key"
+            app:title="Total daily fat allowed"
+            app:summary="45.0g"
+            app:defaultValue="45" />
+        <Preference
+            app:key="reset_fat_now"
+            app:summary="Sets daily fat used today back to 0.0g"
+            app:title="Reset daily fat" />
+    </PreferenceCategory>
+</androidx.preference.PreferenceScreen>

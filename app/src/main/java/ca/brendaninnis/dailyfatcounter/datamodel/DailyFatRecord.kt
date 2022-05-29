@@ -1,5 +1,6 @@
 package ca.brendaninnis.dailyfatcounter.datamodel
 
+import android.util.Log
 import java.text.DateFormatSymbols
 import com.google.gson.Gson
 
@@ -25,10 +26,16 @@ class DailyFatRecord(val id: Int,
     val monthLabel: String
         get() {
             val month = (id and MONTH_MASK) shr MONTH_SHIFT
-            return DateFormatSymbols().months[month - 1]
+            return try {
+                DateFormatSymbols().months[month - 1]
+            } catch (exception: Exception) {
+                Log.w(TAG, "Exception for date with id=$id - ${exception.message}")
+                DateFormatSymbols().months.first()
+            }
         }
 
     companion object {
+        const val TAG               = "DailyFatRecord"
         const val MDY_STRING_FORMAT = "%s %02d, %04d"
         @JvmStatic
         fun fromJson(json: String): ArrayList<DailyFatRecord> = Gson()

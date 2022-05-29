@@ -1,14 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".fragment.SettingsFragment">
-
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    android:layout_height="match_parent">
+    <NumberPicker
+        android:id="@+id/total_fat_number_picker"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/nav_settings" />
-
+        android:scrollbarSize="0dp" />
 </FrameLayout>

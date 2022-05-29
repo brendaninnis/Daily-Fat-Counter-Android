@@ -10,19 +10,14 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.NavArgument
-import androidx.navigation.NavController
-import androidx.navigation.NavDestination
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import ca.brendaninnis.dailyfatcounter.databinding.ActivityMainBinding
 import ca.brendaninnis.dailyfatcounter.datamodel.DailyFatRecord
 import ca.brendaninnis.dailyfatcounter.datastore.CounterDataRepository
-import ca.brendaninnis.dailyfatcounter.math.SECONDS_PER_DAY
+import ca.brendaninnis.dailyfatcounter.math.MILLISECONDS_PER_DAY
 import ca.brendaninnis.dailyfatcounter.viewmodel.CounterViewModel
 import ca.brendaninnis.dailyfatcounter.viewmodel.HistoryViewModel
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.launch
 import java.io.File
 import java.util.*
@@ -92,16 +87,16 @@ class MainActivity : AppCompatActivity() {
 
     private fun startResetTimer(now: Long) {
         val nowOffset = now + TimeZone.getDefault().rawOffset
-        val nowSinceMidnight = nowOffset % SECONDS_PER_DAY
+        val nowSinceMidnight = nowOffset % MILLISECONDS_PER_DAY
         val resetTime = counterViewModel.resetTime.get()
         val fireAt = if (nowSinceMidnight < resetTime) {
             resetTime - nowSinceMidnight
         } else {
-            SECONDS_PER_DAY - nowSinceMidnight + resetTime
+            MILLISECONDS_PER_DAY - nowSinceMidnight + resetTime
         }
         counterTimer = timer("fat_counter_timer",
             initialDelay = fireAt,
-            period = SECONDS_PER_DAY,
+            period = MILLISECONDS_PER_DAY,
             action = {
                 recordDailyFatValues(System.currentTimeMillis())
             }

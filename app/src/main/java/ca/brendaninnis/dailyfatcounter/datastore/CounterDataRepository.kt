@@ -3,7 +3,7 @@ package ca.brendaninnis.dailyfatcounter.datastore
 import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.*
-import ca.brendaninnis.dailyfatcounter.math.SECONDS_PER_DAY
+import ca.brendaninnis.dailyfatcounter.math.MILLISECONDS_PER_DAY
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
@@ -56,8 +56,9 @@ class CounterDataRepository(private val dataStore: DataStore<Preferences>) {
         dataStore.edit { preferences ->
             val lastCheck = preferences[PreferenceKeys.LAST_CHECK] ?: 0L
             val resetTime = preferences[PreferenceKeys.RESET_TIME] ?: 0L
-            val nowDays = (timestamp + TimeZone.getDefault().rawOffset - resetTime) / SECONDS_PER_DAY
-            val thenDays = (lastCheck + TimeZone.getDefault().rawOffset - resetTime) / SECONDS_PER_DAY
+            val offset = TimeZone.getDefault().rawOffset
+            val nowDays = (timestamp + offset - resetTime) / MILLISECONDS_PER_DAY
+            val thenDays = (lastCheck + offset - resetTime) / MILLISECONDS_PER_DAY
             retVal = nowDays > thenDays && lastCheck > 0
             preferences[PreferenceKeys.LAST_CHECK] = timestamp
         }
@@ -71,6 +72,6 @@ class CounterDataRepository(private val dataStore: DataStore<Preferences>) {
     )
 
     companion object {
-        private val TAG = "CounterDataRepository"
+        private const val TAG = "CounterDataRepository"
     }
 }

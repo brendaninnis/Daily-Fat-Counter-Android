@@ -48,14 +48,12 @@ class HistoryAdapter: ListAdapter<HistoryRow, RecyclerView.ViewHolder>(HISTORY_C
     companion object {
         private val HISTORY_COMPARATOR = object : DiffUtil.ItemCallback<HistoryRow>() {
             override fun areItemsTheSame(oldItem: HistoryRow,
-                                         newItem: HistoryRow
-            ): Boolean =
+                                         newItem: HistoryRow): Boolean =
                 oldItem.monthHeader == newItem.monthHeader &&
                 oldItem.dailyFatRecord?.id == newItem.dailyFatRecord?.id
 
             override fun areContentsTheSame(oldItem: HistoryRow,
-                                            newItem: HistoryRow
-            ): Boolean =
+                                            newItem: HistoryRow): Boolean =
                 oldItem.monthHeader == newItem.monthHeader &&
                 oldItem.dailyFatRecord?.json == newItem.dailyFatRecord?.json
         }

@@ -19,10 +19,9 @@ class CounterFragment : Fragment() {
         CounterViewModel.CounterViewModelFactory(CounterDataRepository(requireContext().dataStore))
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater,
+                              container: ViewGroup?,
+                              savedInstanceState: Bundle?): View {
         // Inflate the layout for this fragment
         DataBindingUtil
             .inflate<FragmentCounterBinding>(inflater, R.layout.fragment_counter, container, false)

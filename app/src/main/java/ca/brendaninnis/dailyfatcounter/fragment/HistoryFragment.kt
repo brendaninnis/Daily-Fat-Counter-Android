@@ -22,10 +22,9 @@ class HistoryFragment : Fragment() {
         HistoryViewModel.HistoryViewModelFactory(args.historyFile)
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater,
+                              container: ViewGroup?,
+                              savedInstanceState: Bundle?): View {
         val binding = DataBindingUtil
             .inflate<FragmentHistoryBinding>(inflater, R.layout.fragment_history, container, false)
             .apply {

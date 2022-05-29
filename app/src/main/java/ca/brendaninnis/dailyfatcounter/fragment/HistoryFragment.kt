@@ -28,11 +28,18 @@ class HistoryFragment : Fragment() {
         val binding = DataBindingUtil
             .inflate<FragmentHistoryBinding>(inflater, R.layout.fragment_history, container, false)
             .apply {
+                viewModel = this@HistoryFragment.viewModel
+                lifecycleOwner = this@HistoryFragment.viewLifecycleOwner
                 historyRecycler.addItemDecoration(
                     DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
                 )
                 historyRecycler.adapter = adapter
             }
+        observeHistoryAndUpdateListAdapter()
+        return binding.root
+    }
+
+    private fun observeHistoryAndUpdateListAdapter() {
         viewModel.historyLiveData.observe(viewLifecycleOwner) { history ->
             val list = ArrayList<HistoryRow>()
             var currentMonth = ""
@@ -45,6 +52,5 @@ class HistoryFragment : Fragment() {
             }
             adapter.submitList(list)
         }
-        return binding.root
     }
 }

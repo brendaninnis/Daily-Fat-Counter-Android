@@ -11,15 +11,15 @@ import kotlinx.coroutines.withContext
 import java.io.File
 
 class HistoryViewModel(private val historyFile: File): ObservableViewModel() {
+    var historyLiveData = MutableLiveData<List<DailyFatRecord>>(listOf())
+    private val initialLoadJob: Job
     val historyIsEmptyLiveData: MediatorLiveData<Int> by lazy {
         MediatorLiveData<Int>().apply {
             addSource(historyLiveData) {
-                historyIsEmptyLiveData.value = if (it.isEmpty()) View.GONE else View.VISIBLE
+                historyIsEmptyLiveData.value = visibleIfEmpty(it)
             }
         }
     }
-    var historyLiveData = MutableLiveData<List<DailyFatRecord>>(listOf())
-    private val initialLoadJob: Job
 
     init {
         initialLoadJob = viewModelScope.launch {
@@ -57,6 +57,10 @@ class HistoryViewModel(private val historyFile: File): ObservableViewModel() {
         withContext(Dispatchers.IO) {
             historyFile.writeBytes(history.json.toByteArray())
         }
+    }
+
+    private fun <T> visibleIfEmpty(list: List<T>): Int {
+        return if (list.isEmpty()) View.VISIBLE else View.GONE
     }
 
     class HistoryViewModelFactory(private val historyFile: File) : ViewModelProvider.Factory {

@@ -19,7 +19,7 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:visibility="@{viewModel.historyIsEmptyLiveData}"
-            android:text="A history of your daily fat consumtion will be displayed here once a day has passed." />
+            android:text="@string/history_empty_text" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/history_recycler"

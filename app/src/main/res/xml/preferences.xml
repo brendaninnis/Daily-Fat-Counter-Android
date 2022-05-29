@@ -9,9 +9,25 @@
             app:title="Total daily fat allowed"
             app:summary="45.0g"
             app:defaultValue="45" />
+        <ca.brendaninnis.dailyfatcounter.view.TimePickerPreference
+            app:key="reset_time_pref_key"
+            app:summary="Each day at the chosen time the amount of fat used during the last day will be recorded"
+            app:title="Daily reset time" />
         <Preference
             app:key="reset_fat_now"
             app:summary="Sets daily fat used today back to 0.0g"
-            app:title="Reset daily fat" />
+            app:title="Reset daily fat now" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        app:key="feedback_controls"
+        app:title="Help">
+        <Preference
+            app:key="give_feedback"
+            app:summary="Rate and review Daily Fat Counter on the Play Store"
+            app:title="Give Feedback" />
+        <Preference
+            app:key="report_a_bug"
+            app:summary="Email the developer of Daily Fat Counter"
+            app:title="Report a bug" />
     </PreferenceCategory>
 </androidx.preference.PreferenceScreen>

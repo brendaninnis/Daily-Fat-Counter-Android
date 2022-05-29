@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.*
 import ca.brendaninnis.dailyfatcounter.math.MILLISECONDS_PER_DAY
-import ca.brendaninnis.dailyfatcounter.math.SECONDS_PER_DAY
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map

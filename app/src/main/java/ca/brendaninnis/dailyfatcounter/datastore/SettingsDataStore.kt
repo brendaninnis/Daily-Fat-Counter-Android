@@ -1,8 +1,6 @@
 package ca.brendaninnis.dailyfatcounter.datastore
 
-import android.util.Log
 import androidx.preference.PreferenceDataStore
-import ca.brendaninnis.dailyfatcounter.R
 import ca.brendaninnis.dailyfatcounter.viewmodel.CounterViewModel
 
 class SettingsDataStore(private val counterViewModel: CounterViewModel): PreferenceDataStore() {

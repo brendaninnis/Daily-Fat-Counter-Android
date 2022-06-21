@@ -1,6 +1,8 @@
 package ca.brendaninnis.dailyfatcounter.datastore
 
 import androidx.preference.PreferenceDataStore
+import ca.brendaninnis.dailyfatcounter.math.MILLISECONDS_PER_HOUR
+import ca.brendaninnis.dailyfatcounter.math.MILLISECONDS_PER_MINUTE
 import ca.brendaninnis.dailyfatcounter.viewmodel.CounterViewModel
 
 class SettingsDataStore(private val counterViewModel: CounterViewModel): PreferenceDataStore() {
@@ -15,7 +17,7 @@ class SettingsDataStore(private val counterViewModel: CounterViewModel): Prefere
     override fun putLong(key: String?, value: Long) {
         when (key) {
             RESET_TIME_PREF_KEY -> {
-                counterViewModel.resetTime.set(value)
+                counterViewModel.setResetTime(value)
             }
         }
     }
@@ -32,7 +34,8 @@ class SettingsDataStore(private val counterViewModel: CounterViewModel): Prefere
     override fun getLong(key: String?, defValue: Long): Long {
         when (key) {
             RESET_TIME_PREF_KEY -> {
-                return counterViewModel.resetTime.get()
+                return counterViewModel.resetMinute.get().toLong() * MILLISECONDS_PER_MINUTE +
+                       counterViewModel.resetHour.get() * MILLISECONDS_PER_HOUR
             }
         }
         return super.getLong(key, defValue)

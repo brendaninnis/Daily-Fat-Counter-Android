@@ -5,7 +5,7 @@
     tools:context=".fragment.CounterFragment">
 
     <data>
-        <import type="ca.brendaninnis.dailyfatcounter.view.WeekdayMonthFormatter" />
+        <import type="ca.brendaninnis.dailyfatcounter.view.formatters.WeekdayMonthFormatter" />
 
         <variable
             name="date"

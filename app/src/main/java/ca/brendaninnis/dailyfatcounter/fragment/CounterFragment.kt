@@ -18,17 +18,23 @@ class CounterFragment : Fragment() {
     val viewModel: CounterViewModel by activityViewModels {
         CounterViewModel.CounterViewModelFactory(CounterDataRepository(requireContext().dataStore))
     }
+    lateinit var binding: FragmentCounterBinding
 
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
         // Inflate the layout for this fragment
-        DataBindingUtil
+        binding = DataBindingUtil
             .inflate<FragmentCounterBinding>(inflater, R.layout.fragment_counter, container, false)
             .apply {
                 viewModel = this@CounterFragment.viewModel
                 date = Date()
-                return root
         }
+        return binding.root
+    }
+
+    override fun onResume() {
+        super.onResume()
+        binding.date = Date()
     }
 }

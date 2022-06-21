@@ -1,35 +1,38 @@
 package ca.brendaninnis.dailyfatcounter.viewmodel
 
-import androidx.databinding.Bindable
-import androidx.databinding.Observable
-import androidx.databinding.ObservableFloat
-import androidx.databinding.ObservableLong
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewModelScope
+import androidx.databinding.*
+import androidx.lifecycle.*
 import ca.brendaninnis.dailyfatcounter.BR
 import ca.brendaninnis.dailyfatcounter.datastore.CounterDataRepository
 import ca.brendaninnis.dailyfatcounter.datastore.DEFAULT_DAILY_TOTAL_FAT
+import ca.brendaninnis.dailyfatcounter.math.MILLISECONDS_PER_HOUR
+import ca.brendaninnis.dailyfatcounter.math.MILLISECONDS_PER_MINUTE
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 
-class CounterViewModel(counterDataRepository: CounterDataRepository): ObservableViewModel() {
-    var usedFat = ObservableFloat(0.0f)
-    var totalFat = ObservableFloat(DEFAULT_DAILY_TOTAL_FAT)
-    var resetTime = ObservableLong(0L)
+class CounterViewModel(private val counterDataRepository: CounterDataRepository): ObservableViewModel() {
+    var usedFat     = ObservableFloat(0.0f)
+    var totalFat    = ObservableFloat(DEFAULT_DAILY_TOTAL_FAT)
+    var resetHour   = ObservableInt(0)
+    var resetMinute = ObservableInt(0)
+
     var progress: Float
         @Bindable get() = (usedFat.get() / totalFat.get())
         set(value) {
             usedFat.set(totalFat.get() * value)
         }
 
+    var nextReset = counterDataRepository.nextResetFlow.asLiveData()
+
     init {
         viewModelScope.launch {
             counterDataRepository.counterDataFlow.first().let {
                 usedFat.set(it.usedFat)
                 totalFat.set(it.totalFat)
-                resetTime.set(it.resetTime)
+                resetHour.set(it.resetHour)
+                resetMinute.set(it.resetMinute)
             }
             notifyPropertyChanged(BR.progress)
             observeAndPersistCounterData(counterDataRepository)
@@ -70,6 +73,16 @@ class CounterViewModel(counterDataRepository: CounterDataRepository): Observable
     fun updateTotalFat(grams: Float) {
         totalFat.set(grams)
         notifyPropertyChanged(BR.progress)
+    }
+
+    fun setResetTime(millis: Long) {
+        viewModelScope.launch {
+            val hours   = millis / MILLISECONDS_PER_HOUR
+            val minutes = millis % MILLISECONDS_PER_MINUTE
+            resetHour.set(hours.toInt())
+            resetMinute.set(minutes.toInt())
+            counterDataRepository.updateResetTime(resetHour.get(), resetMinute.get())
+        }
     }
 
     class CounterViewModelFactory(private val counterDataRepository: CounterDataRepository) : ViewModelProvider.Factory {

@@ -1,4 +1,4 @@
-package ca.brendaninnis.dailyfatcounter.view
+package ca.brendaninnis.dailyfatcounter.view.formatters
 
 import java.text.SimpleDateFormat
 import java.util.*

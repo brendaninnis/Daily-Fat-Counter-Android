@@ -3,7 +3,9 @@ package ca.brendaninnis.dailyfatcounter
 import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Toast
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
 import androidx.activity.viewModels
 import androidx.databinding.DataBindingUtil
 import androidx.datastore.core.DataStore
@@ -13,15 +15,13 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import ca.brendaninnis.dailyfatcounter.databinding.ActivityMainBinding
-import ca.brendaninnis.dailyfatcounter.datamodel.DailyFatRecord
 import ca.brendaninnis.dailyfatcounter.datastore.CounterDataRepository
-import ca.brendaninnis.dailyfatcounter.math.MILLISECONDS_PER_DAY
 import ca.brendaninnis.dailyfatcounter.viewmodel.CounterViewModel
 import ca.brendaninnis.dailyfatcounter.viewmodel.HistoryViewModel
 import kotlinx.coroutines.launch
 import java.io.File
+import java.time.ZonedDateTime
 import java.util.*
-import kotlin.concurrent.timer
 
 const val DATA_STORE_NAME = "daily_fat_counter"
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(DATA_STORE_NAME)
@@ -39,10 +39,9 @@ class MainActivity : AppCompatActivity() {
     private val historyViewModel: HistoryViewModel by viewModels {
         HistoryViewModel.HistoryViewModelFactory(historyFile)
     }
-    private val calendar by lazy {
-        Calendar.getInstance(TimeZone.getDefault(), Locale.getDefault())
-    }
-    private var counterTimer: Timer? = null
+    private var dailyFatResetHandler = Handler(Looper.getMainLooper())
+    private var resumed = false
+    private var scheduledResetTime = 0L
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,20 +49,25 @@ class MainActivity : AppCompatActivity() {
             .setContentView(this, R.layout.activity_main)
 
         setupBottomNavigationView(binding)
+
+        Log.d(TAG, "Observe next reset")
+        counterViewModel.nextReset.observe(this) { nextReset ->
+            startResetTimer(nextReset)
+        }
     }
 
     override fun onResume() {
         super.onResume()
+        resumed = true
         lifecycleScope.launch {
-            val now = System.currentTimeMillis()
-            checkDailyFatReset(now)
-            startResetTimer(now)
+            checkDailyFatReset(System.currentTimeMillis())
         }
     }
 
     override fun onPause() {
         super.onPause()
         stopResetTimer()
+        resumed = false
     }
 
     private fun setupBottomNavigationView(binding: ActivityMainBinding) {
@@ -81,44 +85,46 @@ class MainActivity : AppCompatActivity() {
 
     private suspend fun checkDailyFatReset(timestamp: Long) {
         if (counterDataRepository.checkResetTimeElapsed(timestamp)) {
-            recordDailyFatValues(timestamp)
+            recordDailyFatValues()
+        } else {
+            counterDataRepository.calculateAndSetNextReset()
         }
     }
 
-    private fun startResetTimer(now: Long) {
-        val nowOffset = now + TimeZone.getDefault().rawOffset
-        val nowSinceMidnight = nowOffset % MILLISECONDS_PER_DAY
-        val resetTime = counterViewModel.resetTime.get()
-        val fireAt = if (nowSinceMidnight < resetTime) {
-            resetTime - nowSinceMidnight
-        } else {
-            MILLISECONDS_PER_DAY - nowSinceMidnight + resetTime
+    private fun startResetTimer(nextReset: Long) {
+        if (scheduledResetTime == nextReset || !resumed) {
+            return
         }
-        counterTimer = timer("fat_counter_timer",
-            initialDelay = fireAt,
-            period = MILLISECONDS_PER_DAY,
-            action = {
-                recordDailyFatValues(System.currentTimeMillis())
+        Log.d(TAG, "Next Reset at ${Date(nextReset)}")
+        stopResetTimer()
+        dailyFatResetHandler.postDelayed({
+            lifecycleScope.launch {
+                recordDailyFatValues()
             }
-        )
+        }, nextReset - Date().time)
+        scheduledResetTime = nextReset
     }
 
     private fun stopResetTimer() {
-        counterTimer?.cancel()
+        dailyFatResetHandler.removeCallbacksAndMessages(null)
+        scheduledResetTime = 0L
     }
 
-    private fun recordDailyFatValues(timestamp: Long) {
-        calendar.time = Date(timestamp)
-        val dailyFatRecord = DailyFatRecord.createDailyFatRecord(
-            calendar.get(Calendar.YEAR),
-            calendar.get(Calendar.MONTH),
-            calendar.get(Calendar.DAY_OF_MONTH),
+    private suspend fun recordDailyFatValues() {
+        historyViewModel.addDailyFatRecord(
+            counterDataRepository.calculateLastReset(
+                counterViewModel.resetHour.get(),
+                counterViewModel.resetMinute.get(),
+                counterViewModel.nextReset.value ?: Date().time
+            ),
             counterViewModel.usedFat.get(),
             counterViewModel.totalFat.get()
         )
-        historyViewModel.addDailyFatRecord(dailyFatRecord) { error ->
-            Toast.makeText(this, error, Toast.LENGTH_LONG).show()
-        }
+        counterDataRepository.calculateAndSetNextReset()
         counterViewModel.resetUsedFat()
+    }
+
+    companion object {
+        const val TAG = "MainActivity"
     }
 }

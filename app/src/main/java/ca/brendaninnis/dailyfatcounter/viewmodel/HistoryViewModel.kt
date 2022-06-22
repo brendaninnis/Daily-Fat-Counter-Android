@@ -1,5 +1,6 @@
 package ca.brendaninnis.dailyfatcounter.viewmodel
 
+import android.util.Log
 import android.view.View
 import androidx.lifecycle.*
 import ca.brendaninnis.dailyfatcounter.datamodel.DailyFatRecord
@@ -9,6 +10,8 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
+import java.util.*
+import kotlin.collections.ArrayList
 
 class HistoryViewModel(private val historyFile: File): ObservableViewModel() {
     var historyLiveData = MutableLiveData<List<DailyFatRecord>>(listOf())
@@ -27,21 +30,16 @@ class HistoryViewModel(private val historyFile: File): ObservableViewModel() {
         }
     }
 
-    fun addDailyFatRecord(dailyFatRecord: DailyFatRecord,
-                          errorCallback: ((String) -> Unit)? = null) {
+    fun addDailyFatRecord(start: Long,
+                          usedFat: Float,
+                          totalFat: Float) {
         viewModelScope.launch {
             initialLoadJob.join()
             historyLiveData.value?.toMutableList()?.let { history ->
-                if (history.isNotEmpty() && dailyFatRecord.id == history[0].id) {
-                    errorCallback?.let { callback ->
-                        withContext(Dispatchers.Main) {
-                            callback("Daily fat already recorded for ${dailyFatRecord.dateLabel}")
-                        }
-                    }
-                    return@let
-                }
-                history.add(0, dailyFatRecord)
+                history.add(0, DailyFatRecord(history.size, start, usedFat, totalFat))
                 save(history)
+                historyLiveData.value = history
+                Log.d(TAG, "Daily Fat #${history.count()} Added for ${Date(start)} $usedFat/$totalFat")
             }
         }
     }
@@ -67,5 +65,9 @@ class HistoryViewModel(private val historyFile: File): ObservableViewModel() {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             return HistoryViewModel(historyFile) as T
         }
+    }
+
+    companion object {
+        const val TAG = "HistoryViewModel"
     }
 }

@@ -8,7 +8,6 @@ import ca.brendaninnis.dailyfatcounter.datastore.DEFAULT_DAILY_TOTAL_FAT
 import ca.brendaninnis.dailyfatcounter.math.MILLISECONDS_PER_HOUR
 import ca.brendaninnis.dailyfatcounter.math.MILLISECONDS_PER_MINUTE
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 

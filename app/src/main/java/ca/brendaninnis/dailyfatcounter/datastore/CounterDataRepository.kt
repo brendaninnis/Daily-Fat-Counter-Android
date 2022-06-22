@@ -113,8 +113,9 @@ class CounterDataRepository(private val dataStore: DataStore<Preferences>) {
                 .toEpochSecond() * MILLISECONDS_PER_SECOND
         } else {
             Calendar.getInstance(TimeZone.getDefault(), Locale.getDefault()).apply {
+                time = Date(resetTime)
                 add(Calendar.DAY_OF_MONTH, -1)
-                set(Calendar.HOUR, hour)
+                set(Calendar.HOUR_OF_DAY, hour)
                 set(Calendar.MINUTE, minute)
                 set(Calendar.SECOND, 0)
                 return time.time
@@ -126,7 +127,8 @@ class CounterDataRepository(private val dataStore: DataStore<Preferences>) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             var dateTime = ZonedDateTime.now()
             if (dateTime.hour > hour
-                || (dateTime.hour == hour && dateTime.minute > minute)) {
+                || (dateTime.hour == hour && dateTime.minute >= minute)) {
+                // Past reset time for the current day, get the reset time for tomorrow
                 dateTime = dateTime.plusDays(1)
             }
             return dateTime
@@ -136,12 +138,12 @@ class CounterDataRepository(private val dataStore: DataStore<Preferences>) {
                 .toEpochSecond() * MILLISECONDS_PER_SECOND
         } else {
             Calendar.getInstance(TimeZone.getDefault(), Locale.getDefault()).apply {
-                if (get(Calendar.HOUR) > hour ||
-                    (get(Calendar.HOUR) == hour && get(Calendar.MINUTE) > minute)) {
+                if (get(Calendar.HOUR_OF_DAY) > hour
+                    || (get(Calendar.HOUR_OF_DAY) == hour && get(Calendar.MINUTE) >= minute)) {
                     // Past reset time for the current day, get the reset time for tomorrow
                     add(Calendar.DAY_OF_MONTH, 1)
                 }
-                set(Calendar.HOUR, hour)
+                set(Calendar.HOUR_OF_DAY, hour)
                 set(Calendar.MINUTE, minute)
                 set(Calendar.SECOND, 0)
                 return time.time

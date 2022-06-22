@@ -40,7 +40,7 @@ class MainActivity : AppCompatActivity() {
         HistoryViewModel.HistoryViewModelFactory(historyFile)
     }
     private var dailyFatResetHandler = Handler(Looper.getMainLooper())
-    private var dailyResetChecked = false
+    private var resumed = false
     private var scheduledResetTime = 0L
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,26 +52,22 @@ class MainActivity : AppCompatActivity() {
 
         Log.d(TAG, "Observe next reset")
         counterViewModel.nextReset.observe(this) { nextReset ->
-            if (!dailyResetChecked) {
-                return@observe
-            }
             startResetTimer(nextReset)
         }
     }
 
     override fun onResume() {
         super.onResume()
+        resumed = true
         lifecycleScope.launch {
             checkDailyFatReset(System.currentTimeMillis())
-            dailyResetChecked = true
-            startResetTimer(counterViewModel.nextReset.value ?: 0L)
         }
     }
 
     override fun onPause() {
         super.onPause()
-        dailyResetChecked = false
         stopResetTimer()
+        resumed = false
     }
 
     private fun setupBottomNavigationView(binding: ActivityMainBinding) {
@@ -96,7 +92,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun startResetTimer(nextReset: Long) {
-        if (scheduledResetTime == nextReset) {
+        if (scheduledResetTime == nextReset || !resumed) {
             return
         }
         Log.d(TAG, "Next Reset at ${Date(nextReset)}")
@@ -111,7 +107,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun stopResetTimer() {
         dailyFatResetHandler.removeCallbacksAndMessages(null)
-        scheduledResetTime = 0
+        scheduledResetTime = 0L
     }
 
     private suspend fun recordDailyFatValues() {

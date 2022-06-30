@@ -2,5 +2,6 @@
 <resources>
     <style name="Theme.DailyFatCounter" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="android:windowLightStatusBar">true</item>
+        <item name="android:statusBarColor">?android:attr/colorBackground</item>
     </style>
 </resources>

@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <PreferenceCategory
+    <ca.brendaninnis.dailyfatcounter.view.preference.DFCPreferenceCategory
         app:key="daily_fat_controls"
         app:title="Daily Fat Controls">
-        <ca.brendaninnis.dailyfatcounter.view.NumberPickerPreference
+        <ca.brendaninnis.dailyfatcounter.view.preference.NumberPickerPreference
             app:key="@string/total_fat_pref_key"
             app:title="Total daily fat allowed"
             app:summary="45.0g"
             app:defaultValue="45" />
-        <ca.brendaninnis.dailyfatcounter.view.TimePickerPreference
+        <ca.brendaninnis.dailyfatcounter.view.preference.TimePickerPreference
             app:key="reset_time_pref_key"
             app:summary="Each day at the chosen time the amount of fat used during the last day will be recorded"
             app:title="Daily reset time" />
@@ -17,8 +17,8 @@
             app:key="reset_fat_now"
             app:summary="Sets daily fat used today back to 0.0g"
             app:title="Reset daily fat now" />
-    </PreferenceCategory>
-    <PreferenceCategory
+    </ca.brendaninnis.dailyfatcounter.view.preference.DFCPreferenceCategory>
+    <ca.brendaninnis.dailyfatcounter.view.preference.DFCPreferenceCategory
         app:key="feedback_controls"
         app:title="Help">
         <Preference
@@ -29,5 +29,5 @@
             app:key="report_a_bug"
             app:summary="Email the developer of Daily Fat Counter"
             app:title="Report a bug" />
-    </PreferenceCategory>
+    </ca.brendaninnis.dailyfatcounter.view.preference.DFCPreferenceCategory>
 </androidx.preference.PreferenceScreen>

@@ -1,4 +1,4 @@
-package ca.brendaninnis.dailyfatcounter.view
+package ca.brendaninnis.dailyfatcounter.view.preference
 
 import android.content.Context
 import android.content.res.TypedArray

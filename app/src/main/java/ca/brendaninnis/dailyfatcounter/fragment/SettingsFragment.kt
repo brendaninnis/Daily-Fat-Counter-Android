@@ -9,7 +9,7 @@ import ca.brendaninnis.dailyfatcounter.R
 import ca.brendaninnis.dailyfatcounter.dataStore
 import ca.brendaninnis.dailyfatcounter.datastore.CounterDataRepository
 import ca.brendaninnis.dailyfatcounter.datastore.SettingsDataStore
-import ca.brendaninnis.dailyfatcounter.view.TimePickerPreference
+import ca.brendaninnis.dailyfatcounter.view.preference.TimePickerPreference
 import ca.brendaninnis.dailyfatcounter.viewmodel.CounterViewModel
 
 class SettingsFragment : PreferenceFragmentCompat() {

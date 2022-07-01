@@ -50,7 +50,6 @@ class MainActivity : AppCompatActivity() {
 
         setupBottomNavigationView(binding)
 
-        Log.d(TAG, "Observe next reset")
         counterViewModel.nextReset.observe(this) { nextReset ->
             startResetTimer(nextReset)
         }
@@ -95,7 +94,6 @@ class MainActivity : AppCompatActivity() {
         if (scheduledResetTime == nextReset || !resumed) {
             return
         }
-        Log.d(TAG, "Next Reset at ${Date(nextReset)}")
         stopResetTimer()
         dailyFatResetHandler.postDelayed({
             lifecycleScope.launch {

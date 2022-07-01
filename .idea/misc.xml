@@ -3,6 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="../../.gradle/caches/transforms-3/c80016937cd61928afc714adfa755ec8/transformed/material-1.6.1/res/layout/material_clockface_view.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/background_counter_circle.xml" value="0.1565" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.18786773681640628" />
         <entry key="app/src/main/res/layout/fragment_counter.xml" value="0.25" />

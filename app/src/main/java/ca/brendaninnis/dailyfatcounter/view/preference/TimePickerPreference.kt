@@ -49,6 +49,7 @@ class TimePickerPreference(context: Context, attrs: AttributeSet): Preference(co
             .setHour(hours.toInt())
             .setMinute(minutes.toInt())
             .setTitleText("Select reset time")
+            .setTheme(R.style.ThemeOverlay_DailyFatCounter_TimePicker)
             .build()
             .apply {
                 addOnPositiveButtonClickListener {

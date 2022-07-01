@@ -20,4 +20,8 @@
     <style name="PreferenceFragment.DailyFatCounter.PreferenceScreen" parent="Theme.DailyFatCounter">
         <item name="android:textColor">@color/blue</item>
     </style>
+
+    <style name="ThemeOverlay.DailyFatCounter.TimePicker" parent="ThemeOverlay.MaterialComponents.TimePicker">
+        <item name="colorPrimary">@color/blue</item>
+    </style>
 </resources>

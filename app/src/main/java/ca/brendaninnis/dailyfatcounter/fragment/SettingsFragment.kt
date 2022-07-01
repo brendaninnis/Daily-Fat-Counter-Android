@@ -46,8 +46,16 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(
                         "market://details?id=${requireContext().packageName}")))
                 } catch (e: ActivityNotFoundException) {
-                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(
-                        "https://play.google.com/store/apps/details?id=${requireContext().packageName}")))
+                    try {
+                        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(
+                            "https://play.google.com/store/apps/details?id=${requireContext().packageName}")))
+                    } catch (e2: ActivityNotFoundException) {
+                        Toast.makeText(
+                            requireContext(),
+                            "Unable to show Play Store review on this device.",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
                 }
             }
             REPORT_BUG_PREF_KEY -> {
@@ -58,7 +66,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     putExtra(Intent.EXTRA_TEXT, "[ Please describe what you expected to happen, " +
                             "what you did and what actually happened. ]")
                     try {
-                        startActivity(Intent.createChooser(this, "Send bug report..."))
+                        startActivity(Intent.createChooser(this, "Send mail..."))
                     } catch (exception: ActivityNotFoundException) {
                         Toast.makeText(
                             requireContext(),

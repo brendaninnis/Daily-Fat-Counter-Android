@@ -91,12 +91,17 @@ class CounterDataRepository(private val dataStore: DataStore<Preferences>) {
         }
     }
 
-    suspend fun calculateAndSetNextReset() {
+    suspend fun calculateAndSetNextReset(): Boolean {
+        var retVal = false
         dataStore.edit { preferences ->
             val hour = preferences[PreferenceKeys.RESET_HOUR] ?: 0
             val minute = preferences[PreferenceKeys.RESET_MINUTE] ?: 0
-            preferences[PreferenceKeys.NEXT_RESET] = calculateNextReset(hour, minute)
+            val nextReset = preferences[PreferenceKeys.NEXT_RESET] ?: 0L
+            val calculated = calculateNextReset(hour, minute)
+            preferences[PreferenceKeys.NEXT_RESET] = calculated
+            retVal = nextReset != calculated
         }
+        return retVal
     }
 
     fun calculateLastReset(hour: Int, minute: Int, resetTime: Long): Long {

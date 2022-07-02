@@ -20,7 +20,6 @@ import ca.brendaninnis.dailyfatcounter.viewmodel.CounterViewModel
 import ca.brendaninnis.dailyfatcounter.viewmodel.HistoryViewModel
 import kotlinx.coroutines.launch
 import java.io.File
-import java.time.ZonedDateTime
 import java.util.*
 
 const val DATA_STORE_NAME = "daily_fat_counter"
@@ -39,8 +38,9 @@ class MainActivity : AppCompatActivity() {
     private val historyViewModel: HistoryViewModel by viewModels {
         HistoryViewModel.HistoryViewModelFactory(historyFile)
     }
-    private var dailyFatResetHandler = Handler(Looper.getMainLooper())
-    private var resumed = false
+    private val dailyFatResetHandler by lazy {
+        Handler(Looper.getMainLooper())
+    }
     private var scheduledResetTime = 0L
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,24 +49,22 @@ class MainActivity : AppCompatActivity() {
             .setContentView(this, R.layout.activity_main)
 
         setupBottomNavigationView(binding)
-
-        counterViewModel.nextReset.observe(this) { nextReset ->
-            startResetTimer(nextReset)
-        }
     }
 
     override fun onResume() {
         super.onResume()
-        resumed = true
         lifecycleScope.launch {
             checkDailyFatReset(System.currentTimeMillis())
+            counterViewModel.nextReset.observe(this@MainActivity) { nextReset ->
+                startResetTimer(nextReset)
+            }
         }
     }
 
     override fun onPause() {
         super.onPause()
         stopResetTimer()
-        resumed = false
+        counterViewModel.nextReset.removeObservers(this)
     }
 
     private fun setupBottomNavigationView(binding: ActivityMainBinding) {
@@ -86,15 +84,19 @@ class MainActivity : AppCompatActivity() {
         if (counterDataRepository.checkResetTimeElapsed(timestamp)) {
             recordDailyFatValues()
         } else {
-            counterDataRepository.calculateAndSetNextReset()
+            if (!counterDataRepository.calculateAndSetNextReset()) {
+                // Reset time hasn't changed, start the timer "manually"
+                startResetTimer(counterViewModel.nextReset.value ?: 0L)
+            }
         }
     }
 
     private fun startResetTimer(nextReset: Long) {
-        if (scheduledResetTime == nextReset || !resumed) {
+        if (scheduledResetTime == nextReset) {
             return
         }
         stopResetTimer()
+        Log.d(TAG, "Next reset scheduled for ${Date(nextReset)}")
         dailyFatResetHandler.postDelayed({
             lifecycleScope.launch {
                 recordDailyFatValues()
@@ -118,7 +120,9 @@ class MainActivity : AppCompatActivity() {
             counterViewModel.usedFat.get(),
             counterViewModel.totalFat.get()
         )
-        counterDataRepository.calculateAndSetNextReset()
+        if (!counterDataRepository.calculateAndSetNextReset()) {
+            Log.w(TAG, "Daily reset elapsed but the calculated reset time hasn't changed")
+        }
         counterViewModel.resetUsedFat()
     }
 

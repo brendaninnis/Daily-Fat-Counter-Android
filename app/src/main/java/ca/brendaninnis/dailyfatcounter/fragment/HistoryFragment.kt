@@ -17,7 +17,9 @@ import ca.brendaninnis.dailyfatcounter.viewmodel.HistoryViewModel
 
 class HistoryFragment : Fragment() {
     private val args: HistoryFragmentArgs by navArgs()
-    private val adapter = HistoryAdapter()
+    private val adapter by lazy {
+        HistoryAdapter()
+    }
     val viewModel: HistoryViewModel by activityViewModels {
         HistoryViewModel.HistoryViewModelFactory(args.historyFile)
     }

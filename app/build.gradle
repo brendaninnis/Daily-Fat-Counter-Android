@@ -13,7 +13,7 @@ android {
         applicationId "ca.brendaninnis.dailyfatcounter"
         minSdk 22
         targetSdk 33
-        versionCode 5
+        versionCode 6
         versionName "1.0"
         resourceConfigurations += ['en']
 
@@ -47,7 +47,7 @@ android {
 
 dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    def nav_version = "2.6.0"
+    def nav_version = "2.4.2"
     def coroutines_version = "1.6.0"
     def lifecycle_version = "2.4.1"
 

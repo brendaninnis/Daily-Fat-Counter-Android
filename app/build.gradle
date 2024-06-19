@@ -7,12 +7,12 @@ plugins {
 apply plugin: 'kotlin-kapt'
 
 android {
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         applicationId "ca.brendaninnis.dailyfatcounter"
         minSdk 22
-        targetSdk 33
+        targetSdk 34
         versionCode 6
         versionName "1.0"
         resourceConfigurations += ['en']

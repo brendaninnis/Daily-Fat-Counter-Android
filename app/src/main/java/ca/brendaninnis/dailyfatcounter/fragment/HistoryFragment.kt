@@ -7,21 +7,23 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
-import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.DividerItemDecoration
 import ca.brendaninnis.dailyfatcounter.R
 import ca.brendaninnis.dailyfatcounter.databinding.FragmentHistoryBinding
 import ca.brendaninnis.dailyfatcounter.adapter.HistoryAdapter
 import ca.brendaninnis.dailyfatcounter.adapter.HistoryRow
 import ca.brendaninnis.dailyfatcounter.viewmodel.HistoryViewModel
+import java.io.File
 
 class HistoryFragment : Fragment() {
-    private val args: HistoryFragmentArgs by navArgs()
+    private val historyFile by lazy {
+        File(requireContext().filesDir, "history.data")
+    }
     private val adapter by lazy {
         HistoryAdapter()
     }
-    val viewModel: HistoryViewModel by activityViewModels {
-        HistoryViewModel.HistoryViewModelFactory(args.historyFile)
+    private val viewModel: HistoryViewModel by activityViewModels {
+        HistoryViewModel.HistoryViewModelFactory(historyFile)
     }
 
     override fun onCreateView(inflater: LayoutInflater,

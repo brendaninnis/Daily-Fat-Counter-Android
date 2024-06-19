@@ -69,13 +69,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupBottomNavigationView(binding: ActivityMainBinding) {
         binding.navHostFragment.getFragment<NavHostFragment>().navController.let { navController ->
-            navController.addOnDestinationChangedListener { _, destination, arguments ->
-                when (destination.id) {
-                    R.id.historyFragment -> {
-                        arguments?.putSerializable("historyFile", historyFile)
-                    }
-                }
-            }
             binding.bottomNavigationView.setupWithNavController(navController)
         }
     }

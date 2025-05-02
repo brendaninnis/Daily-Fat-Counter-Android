@@ -13,8 +13,8 @@ android {
         applicationId "ca.brendaninnis.dailyfatcounter"
         minSdk 22
         targetSdk 35
-        versionCode 8
-        versionName "1.0.1"
+        versionCode 9
+        versionName "1.0.2"
         resourceConfigurations += ['en']
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -47,9 +47,9 @@ android {
 
 dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    def nav_version = "2.7.7"
+    def nav_version = "2.8.9"
     def coroutines_version = "1.8.0"
-    def lifecycle_version = "2.8.3"
+    def lifecycle_version = "2.8.7"
 
     implementation 'androidx.core:core-ktx:1.16.0'
     implementation 'androidx.appcompat:appcompat:1.7.0'

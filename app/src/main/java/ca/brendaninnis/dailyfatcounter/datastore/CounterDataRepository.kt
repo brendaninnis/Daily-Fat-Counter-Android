@@ -4,19 +4,15 @@ import android.os.Build
 import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.*
-import ca.brendaninnis.dailyfatcounter.math.MILLISECONDS_PER_MINUTE
 import ca.brendaninnis.dailyfatcounter.math.MILLISECONDS_PER_SECOND
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import java.io.IOException
 import java.time.Instant
-import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
-import java.time.temporal.TemporalAdjusters
 import java.util.*
-import kotlin.math.min
 
 const val DEFAULT_DAILY_TOTAL_FAT = 45.0f
 

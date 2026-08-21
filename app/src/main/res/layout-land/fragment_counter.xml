@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".fragment.CounterFragment">
+
+    <data>
+        <import type="ca.brendaninnis.dailyfatcounter.view.formatters.WeekdayMonthFormatter" />
+
+        <variable
+            name="date"
+            type="java.util.Date" />
+
+        <variable
+            name="viewModel"
+            type="ca.brendaninnis.dailyfatcounter.viewmodel.CounterViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="12dp">
+
+        <TextView
+            android:id="@+id/date_label"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@{WeekdayMonthFormatter.INSTANCE.format(date)}"
+            android:textAppearance="?textAppearanceHeadline5"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/content_divider"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.6" />
+
+        <FrameLayout
+            android:id="@+id/counter_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/content_divider"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/date_label">
+
+            <ca.brendaninnis.dailyfatcounter.view.CircularCounter
+                android:layout_width="210dp"
+                android:layout_height="210dp"
+                android:layout_marginBottom="8dp"
+                android:padding="@dimen/circleCounterPadding"
+                custom:progress="@={viewModel.progress}" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text='@{String.format("%.1fg", (float) Math.round(viewModel.usedFat))}'
+                    android:textAppearance="@style/TextAppearance.DailyFatCounter.Headline4" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text='@{String.format("/ %.1fg", viewModel.totalFat)}'
+                    android:textAppearance="?textAppearanceSubtitle2" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center_horizontal"
+                android:text="@string/total_fat"
+                android:textAppearance="?textAppearanceSubtitle1" />
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/content_divider"
+            app:layout_constraintTop_toBottomOf="@id/date_label">
+
+            <Button
+                style="@style/Widget.DailyFatCounter.CounterButton"
+                android:layout_width="90dp"
+                android:layout_height="56dp"
+                android:layout_margin="4dp"
+                android:onClick="@{() -> viewModel.addFat(1f)}"
+                android:text="+ 1g" />
+
+            <Button
+                style="@style/Widget.DailyFatCounter.CounterButton"
+                android:layout_width="90dp"
+                android:layout_height="56dp"
+                android:layout_margin="4dp"
+                android:onClick="@{() -> viewModel.addFat(5f)}"
+                android:text="+ 5g" />
+
+            <Button
+                style="@style/Widget.DailyFatCounter.CounterButton"
+                android:layout_width="90dp"
+                android:layout_height="56dp"
+                android:layout_margin="4dp"
+                android:onClick="@{() -> viewModel.addFat(10f)}"
+                android:text="+ 10g" />
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

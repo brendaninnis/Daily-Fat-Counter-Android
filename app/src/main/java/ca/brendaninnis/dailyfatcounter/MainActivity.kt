@@ -6,8 +6,8 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.databinding.DataBindingUtil
@@ -48,27 +48,29 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
+
         val binding: ActivityMainBinding = DataBindingUtil
             .setContentView(this, R.layout.activity_main)
 
         setupBottomNavigationView(binding)
 
-        // Apply window insets to handle safe area
+        // Keep fragment content inside the safe area. BottomNavigationView
+        // applies system-bar insets to itself, so it remains attached to the
+        // window edge and owns the navigation-bar inset.
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
-            val systemInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            val systemInsets = insets.getInsets(
+                WindowInsetsCompat.Type.systemBars() or
+                    WindowInsetsCompat.Type.displayCutout()
+            )
 
-            // Set top guideline
-            val params = binding.guidelineTop.layoutParams as ConstraintLayout.LayoutParams
-            params.guideBegin = systemInsets.top
-            binding.guidelineTop.layoutParams = params
-
-            // Set bottom guideline
-            val paramsBottom = binding.guidelineBottom.layoutParams as ConstraintLayout.LayoutParams
-            paramsBottom.guideEnd = systemInsets.bottom
-            binding.guidelineBottom.layoutParams = paramsBottom
+            binding.guidelineTop.setGuidelineBegin(systemInsets.top)
+            binding.guidelineStart.setGuidelineBegin(systemInsets.left)
+            binding.guidelineEnd.setGuidelineEnd(systemInsets.right)
 
             insets
         }
+        ViewCompat.requestApplyInsets(binding.root)
     }
 
     override fun onResume() {
